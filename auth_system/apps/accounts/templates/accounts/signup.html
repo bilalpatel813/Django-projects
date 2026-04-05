@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ismail Yusuf College - Sign Up</title>
+    <style>
+        body {
+            background-color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .signup-card {
+            background-color: #121212;
+            padding: 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .college-name {
+            color: #4f8069;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .title {
+            color: #ffffff;
+            font-size: 15px;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background-color: #242424;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        input::placeholder {
+            color: #555;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #004d30;
+        }
+
+        /* The "OR" Separator */
+        .or-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 15px 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .or-divider::before, .or-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #333;
+        }
+
+        .or-divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+
+        .or-divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #004d30;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .signup-btn:hover {
+            background-color: #006341;
+        }
+
+        .login-link {
+            margin-top: 25px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #4f8069;
+            text-decoration: none;
+        }
+        .form-control {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    background-color: #1e1e1e;
+    color: #fff;
+    border: 1px solid #333;
+    margin-bottom: 20px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #00a86b;
+}
+    </style>
+</head>
+<body>
+
+    <div class="signup-card">
+        <div class="college-name">Cooked College</div>
+        <div class="title">Get Username & Password</div>
+
+        <form method="POST" action= "{% url 'signup' %}">
+            
+            <div class="input-group">
+            {% csrf_token %}
+                <label>College Email*</label>
+                <input type="email" placeholder="name@example.com" required name="email">
+            </div>    
+            <div class="input-group">
+            
+    <label>Full Name *</label>
+    <input type="text" placeholder="enter your full name" required name="name">
+</div>
+      <div class="form-group">
+    <label for="role">Choose Role</label>
+    <select name="role" id="role" class="form-control">
+        <option value="students">Student</option>
+        <option value="teachers">Teacher</option>
+    </select>
+</div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" placeholder="........" required>
+            </div>
+
+            <button type="submit" class="signup-btn">Submit</button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="{% url 'login' %}">Login here</a>
+        </div>
+    </div>
+
+</body>
+</html>
