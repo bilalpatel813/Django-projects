@@ -1,28 +1,27 @@
-# 🔥 Python
+#  Python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 
-# 🔐 Virtual Environment
+#  Virtual Environment
 venv/
 env/
 ENV/
 
-# 🗄️ Database
+# ����Database
 db.sqlite3
 
-# 📁 Media & Static
+#  Media & Static
 media/
 staticfiles/
 
-# 🔑 Environment variables (VERY IMPORTANT)
+#  Environment variables
 .env
 
-# 📝 Logs
+#  Logs
 *.log
 
-
-# 🖥️ OS files
+# ️ OS files
 .DS_Store
 Thumbs.db
