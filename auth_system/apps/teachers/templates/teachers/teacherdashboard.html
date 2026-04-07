@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #eef2ff, #e0f2fe);
+}
+
+/* FULL SCREEN DASHBOARD */
+.dashboard {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 50px;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    padding: 30px;
+    border-radius: 20px;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.header p {
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+/* BRANCH IMAGE */
+.branch {
+    text-align: center;
+}
+
+.branch img {
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 3px solid white;
+}
+
+/* SECTION */
+.section-title {
+    margin: 25px 0 15px;
+    font-weight: 600;
+    font-size: 20px;
+    color: #374151;
+}
+
+/* BUTTONS */
+.actions {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.btn-add {
+    background: #22c55e;
+    color: white;
+}
+
+.btn-view {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-delete {
+    background: #ef4444;
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    opacity: 0.9;
+}
+
+/* CARDS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 10px;
+}
+
+.card {
+    padding: 30px;
+    border-radius: 18px;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card:nth-child(1) {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+}
+
+.card:nth-child(2) {
+    background: linear-gradient(135deg, #10b981, #34d399);
+}
+
+.card:nth-child(3) {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+}
+
+/* FOOTER */
+.footer {
+    margin-top: 40px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+{% extends 'base.html' %}
+{% block nav %}
+{% endblock %}
+{% block content %}
+{% if is_teacher %}
+<div class="dashboard">
+
+    <div class="header">
+        <div>
+            <h1>Welcome, Teacher 👋</h1>
+            <p>Computer Science Department</p>
+        </div>
+
+ 
+        <div class="branch">
+            <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914" alt="coding">
+            <p>Department</p>
+        </div>
+    </div>
+
+
+    <h2 class="section-title">Student Management</h2>
+    <div class="actions">
+        <button class="btn btn-add">Add Student</button>
+        <button class="btn btn-view">View Students</button>
+        <button class="btn btn-delete">Delete Student</button>
+    </div>
+
+
+    <h2 class="section-title">Quick Access</h2>
+    <div class="cards">
+        <div class="card">📊 Attendance</div>
+        <div class="card">📈 Result</div>
+        <div class="card">📅 Exam Timetable</div>
+    </div>
+
+    <div class="footer">
+        © 2026 Teacher Dashboard | Designed for Productivity 🚀
+    </div>
+
+</div>
+{% endif %}
+{% endblock %}
+</body>
+</html>

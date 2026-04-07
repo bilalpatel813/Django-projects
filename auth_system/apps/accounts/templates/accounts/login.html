@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Login| Ismail Yusuf College</title>
+    <style>
+        :root {
+            --premium-blue: #0a2351; /* Deep Navy */
+            --royal-blue: #1a73e8;   /* Vibrant Accent */
+            --pitch-white: #ffffff;  /* Pure White */
+            --soft-gray: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--premium-blue) 0%, #163a7a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-card {
+            background-color: var(--pitch-white);
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--premium-blue);
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--premium-blue);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e1e5ee;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--royal-blue);
+            box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--premium-blue);
+            color: var(--pitch-white);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background-color: #0d2d66;
+            transform: translateY(-2px);
+        }
+
+        .forgot-pass {
+            margin-top: 15px;
+            display: block;
+            font-size: 13px;
+            color: var(--royal-blue);
+            text-decoration: none;
+        }
+
+        .forgot-pass:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h1>Welcome Back</h1>
+        <p>Enter your credentials to access your college portal.</p>
+        
+        <form method='POST' action='{% url 'login' %}'>
+            <div class="input-group">
+            {% csrf_token %}
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter username" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter Your Password" required>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+            <a href="{% url 'signup' %}" class="forgot-pass">Forgot password?</a>
+        </form>
+    </div>
+
+</body>
+</html>
