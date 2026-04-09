@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - PieBlogs</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Pacifico&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Center Card */
+.login-container {
+    max-width: 350px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Logo */
+.logo {
+    font-family: 'Pacifico', cursive;
+    text-align: center;
+    font-size: 24px;
+    color: #667eea;
+}
+
+.sub {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+/* Inputs */
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.input-group input {
+    width: 93%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+}
+
+/* Row */
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+.row a {
+    text-decoration: none;
+    color: #667eea;
+}
+
+/* Button */
+.login-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background: #667eea;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    margin-top: 20px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="logo">PieBlogs</div>
+    <div class="sub">Login</div>
+
+    <form method="POST">
+         {% csrf_token %}
+         
+        <div class="input-group">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Enter your username">
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter your password">
+        </div>
+
+        <div class="row">
+            <label><input type="checkbox"> Remember me</label>
+            <a href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+
+    </form>
+
+</div>
+
+<div class="footer">
+    © PieBlogs — made with ❤️
+</div>
+
+</body>
+</html>

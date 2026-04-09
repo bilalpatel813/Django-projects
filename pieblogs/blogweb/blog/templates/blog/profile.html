@@ -195,10 +195,12 @@ body {
         </div>
     </div>
     <div class="bio">
-    
-        <strong>@{{ post.author }}</strong><br>
+    {% if request.user == user %}
+        <strong>@{{ user.username }}</strong><br>
+        
         Django Developer 🚀 | Building PieBlogs
     </div>
+    {% endif %}
 </div>
 <!-- Tabs -->
 <div class="tabs">
@@ -212,6 +214,7 @@ body {
     <!-- POSTS -->
     <div id="posts">
         {% for post in posts %}
+        {% if request.user == post.author %}
         <div class="post">
             <div class="title">{{ post.title }}</div>
             <div class="content">{{ post.content }}</div>
@@ -227,6 +230,7 @@ body {
 
                     <div onclick="openModal({{ post.pk }}, '{{ post.title }}')">
                         <i class="fa-solid fa-trash"></i>
+                        {% endif %}
                         {% endif %}
                     </div>
                 </div>
