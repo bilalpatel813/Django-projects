@@ -43,7 +43,7 @@ class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
 class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model= Post
     template_name="blog/profile.html"
-    success_url=reverse_lazy("home")
+    success_url=reverse_lazy("profile")
     def test_func(self):
         post=self.get_object()
         return self.request.user == post.author

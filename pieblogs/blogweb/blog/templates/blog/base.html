@@ -343,11 +343,11 @@ body {
 <!-- DELETE MODAL -->
 <div id="deleteModal" class="modal">
     <div class="modal-content">
-        <p>Are you sure? You want to delete {{ postTitle }}</p>
+        <p id='modalText'></p>
 
-        <form>
-            {% csrf_token %}
-            <button type="submit" class="delete-btn">Yes</button>
+        <form id="deleteform" method='POST'>
+             {% csrf_token %}
+            <button class="delete-btn" onclick="openModal({{ post.pk }}, '{{ post.title }}')" >Yes</button>
         </form>
 
         <button class="cancel-btn" onclick="closeModal()">Cancel</button>
@@ -369,6 +369,19 @@ function openSettings(){
 
 function closeSettings(){
     document.getElementById("settingsModal").style.display="none";
+}
+
+function openModal(postId,title) {
+    document.getElementById("deleteModal").style.display = "block";
+
+    // set form action dynamically
+document.getElementById("modalText").innerText =
+        "Are you sure you want to delete '"+title+"'?";
+  document.getElementById("deleteform").action = `/pieblogs/delete/${postId}/`;
+}
+
+function closeModal() {
+    document.getElementById("deleteModal").style.display = "none";
 }
 </script>
 
