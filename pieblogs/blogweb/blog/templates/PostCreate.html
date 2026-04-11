@@ -106,7 +106,14 @@ button {
 }
 
 .cancel {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
     background: #eee;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    display: inline-block;
 }
 
 .preview {
@@ -164,7 +171,7 @@ button {
 
         <!-- Buttons -->
         <div class="buttons">
-            <button type="cancel" class="cancel"><a href="/pieblogs/profile/">Cancel</a></button>
+            <a href="{% url 'profile' %}" class="cancel">cancel</a>
             <button type="button" class="preview">Preview</button>
             <button type="submit" class="publish">Publish</button>
         </div>
