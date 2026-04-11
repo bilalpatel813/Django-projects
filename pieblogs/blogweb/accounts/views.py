@@ -11,8 +11,12 @@ class CreateCredential(CreateView):
     template_name='accounts/create_credential.html'
     success_url=reverse_lazy('home')
     def form_valid(self, form):
-        print("form valid")
+        print("credential form valid")
         response =super().form_valid(form)
         login(self.request, self.object)
         return response
+    
+
+    
+    
     

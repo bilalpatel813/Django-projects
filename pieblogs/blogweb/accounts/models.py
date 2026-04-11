@@ -3,5 +3,6 @@ from django.contrib.auth.models import User
 # Create your models here.
 class profile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
+    email= models.EmailField(null=True)
     bio=models.TextField(blank=True)
     

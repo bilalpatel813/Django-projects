@@ -78,15 +78,16 @@ button{
 
 <div class="logo">PieBlogs</div>
 <h3>Create your account</h3>
-
-<input type="email" placeholder="Enter your email">
+<form method="POST">
+{% csrf_token %}
+<input type="email" name="email" placeholder="Enter your email">
 
 <div class="login">
 Already have account? <a href="#">Login</a>
 </div>
 
 <button>Submit</button>
-
+</form>
 </div>
 
 </div>
