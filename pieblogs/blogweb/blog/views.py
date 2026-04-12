@@ -23,7 +23,7 @@ class PostListView(ListView):
 
 class PostCreateView(LoginRequiredMixin,CreateView):
         model= Post
-        fields=['title','content']
+        fields=['title','content','image']
         template_name="blog/post_form.html"
         success_url=reverse_lazy("home")
         def form_valid(self,form):

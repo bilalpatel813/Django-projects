@@ -21,16 +21,29 @@ button {width:100%;padding:10px;margin-top:15px;border-radius:20px;border:none;b
 <div class="container">
 <div class="card">
 
-<div class="steps">Step 2 of 4</div>
+<div class="steps">Step 2 of 3</div>
 
 <h3>Verify OTP</h3>
-
+<form method='POST'>
+{% csrf_token %}
 <div class="otp">
-<input maxlength="1"><input maxlength="1"><input maxlength="1"><input maxlength="1">
+{% if error %}
+<div style="
+    background:#ffe0e0;
+    color:#b30000;
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:10px;
+">
+    {{ error }}
 </div>
-<p>didn't get OTP ? <a href="">Resend link</a> </p>
+{% endif %}
+<input name='otp' maxlength="1"><input name='otp' maxlength="1"><input name='otp' maxlength="1"><input name='otp' maxlength="1">
+</div>
+<p>didn't get OTP ? <a href="{% url 'resendotp' %}"> Resend link</a> </p>
 <button>Verify</button>
-
+</form>
+{{ form.errors }}
 </div>
 </div>
 </body>

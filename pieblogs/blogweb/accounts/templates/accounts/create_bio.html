@@ -146,10 +146,10 @@ button:hover{
 <div class="steps">Step 4 of 4</div>
 
 <h3>Welcome 🎉</h3>
-
+<form method='POST' enctype="multipart/form-data">
 <!-- PFP -->
 <label class="pfp">
-<input type="file" hidden onchange="preview(event)">
+<input name="image" type="file" hidden onchange="preview(event)">
 <span id="pfpText">Tap to upload</span>
 <img id="pfpImg">
 </label>
@@ -158,10 +158,11 @@ button:hover{
 
 <div class="label">Create your Bio</div>
 
-<textarea placeholder="Tell people about yourself..."></textarea>
+<textarea name="bio" placeholder="Tell people about yourself..."></textarea>
 
 <button>Finish</button>
-
+</form>
+{{ form.errors }}
 </div>
 
 </div>

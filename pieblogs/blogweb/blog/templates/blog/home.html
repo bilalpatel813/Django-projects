@@ -173,6 +173,9 @@ body {
         </div>
         <div class="title">{{ post.title }}</div>
         <div class="content">{{ post.content }}</div>
+        {% if post.image %}
+        <img src="{{ post.image.url }}" width="200">
+    {% endif %}
         <div class="actions">
             ❤️ 💬
         </div>

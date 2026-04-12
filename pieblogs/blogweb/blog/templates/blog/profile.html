@@ -158,7 +158,8 @@ body {
         <div class="avatar"></div>
 
         <div class="stats">
-            <div><strong>{{ posts|length }}</strong><br>Posts</div>
+            <div><strong>{{ request.user.post_set.count }}</strong><br>Posts</div>
+
             <div><strong>100</strong><br>Followers</div>
             <div><strong>120</strong><br>Following</div>
         </div>
@@ -186,6 +187,9 @@ body {
         <div class="post">
             <div class="title">{{ post.title }}</div>
             <div class="content">{{ post.content }}</div>
+            {% if post.image %}
+        <img src="{{ post.image.url }}" width="200">
+    {% endif %}
 
             <div class="post-actions">
                 <div class="left-actions">❤️ 💬</div>
