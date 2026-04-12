@@ -9,5 +9,10 @@ class CustomSignUp(UserCreationForm):
         model = User
         fields=['username','email','password1','password2']
         
-
+class CustomBioPfp(UserCreationForm):
+    
+    class Meta:
+        model=profile
+        fields=['bio','profilepic']
+        
         

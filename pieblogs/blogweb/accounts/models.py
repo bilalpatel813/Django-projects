@@ -7,6 +7,9 @@ class profile(models.Model):
     profilepic=models.ImageField(upload_to="profile/pfp/",blank=True,null=True)
     bio=models.TextField(blank=True)
     
+    def __str__(self):
+        return f'{self.user.username}'
+    
     
 class EmailOTP(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)

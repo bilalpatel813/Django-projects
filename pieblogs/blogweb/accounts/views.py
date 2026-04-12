@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
-from accounts.forms import CustomSignUp
+from accounts.forms import CustomSignUp,CustomBioPfp
 from django.contrib.auth import login
 from .utils import generate_otp,send_email
 from .models import EmailOTP
@@ -54,7 +54,7 @@ class Send_OTP(View):
             print("error in otp validation")
             login(request,user)
             print('user signed in by otp verify')
-            return redirect('home')
+            return redirect('createbiopfp')
             
         return render(request,'accounts/otp_varify.html',{'error':'invalid OTP'})
 
@@ -76,7 +76,14 @@ class ResendOTP(View):
         EmailOTP.objects.create(user=user,otp=otp)
         send_email(user,otp)
         print("new email sent")
-        return redirect('verify-otp')       
+        return redirect('verify-otp') 
+        
+        
+class CreateBioPfp(CreateView):
+          form_class=CustomBioPfp
+          template_name='accounts/create_bio.html'
+          success_url=reverse_lazy('home')
+          
 
     
     

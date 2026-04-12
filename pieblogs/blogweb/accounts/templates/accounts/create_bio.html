@@ -148,8 +148,9 @@ button:hover{
 <h3>Welcome 🎉</h3>
 <form method='POST' enctype="multipart/form-data">
 <!-- PFP -->
+{% csrf_token %}
 <label class="pfp">
-<input name="image" type="file" hidden onchange="preview(event)">
+<input name="profilpic" type="file" hidden onchange="preview(event)">
 <span id="pfpText">Tap to upload</span>
 <img id="pfpImg">
 </label>

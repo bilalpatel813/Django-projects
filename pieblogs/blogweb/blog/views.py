@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.views import View
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
-from django.views.generic import ListView,CreateView,UpdateView,DeleteView
+from django.views.generic import ListView,CreateView,UpdateView,DeleteView,DetailView
 from django.urls import reverse_lazy
 from .models import Post
 # Create your views here. 
@@ -12,10 +13,15 @@ class HomeView(LoginRequiredMixin,ListView):
      context_object_name="posts"
      
 class ProfileView(LoginRequiredMixin,ListView):
-    model=Post
+    model= Post
     template_name="blog/profile.html"
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
     context_object_name="posts"
-    
+    def get_queryset(self):
+        username = self.kwargs.get('username')
+        return Post.objects.filter(author__username=username)
+       
 class PostListView(ListView):
     model= Post
     template_name="blog/Post_list.html"

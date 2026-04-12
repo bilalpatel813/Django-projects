@@ -142,7 +142,7 @@ textarea {
 
         <!-- Buttons -->
         <div class="buttons">
-            <button><a href="{% url 'profile' %}" class="cancel">Cancel</a></button>
+            <button><a href="{% url 'profile' user.username %}" class="cancel">Cancel</a></button>
             <button type="button" class="preview">Preview</button>
             <button type="submit" class="publish">Publish</button>
         </div>

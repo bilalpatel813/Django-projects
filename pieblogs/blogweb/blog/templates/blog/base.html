@@ -314,7 +314,7 @@ body {
             <div class="divider"></div>
 
             <!-- Items -->
-            <a href="/pieblogs/profile/" class="settings-item">
+            <a href="{% url 'profile' user.username %}" class="settings-item">
                 <i class="fa-solid fa-circle-user"></i>
                 <span>Profile</span>
             </a>

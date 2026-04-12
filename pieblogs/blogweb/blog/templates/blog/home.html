@@ -111,8 +111,13 @@ body {
 .username {
     font-weight: 600;
     font-size: 14px;
+    
 }
 
+.username a {
+    text-decoration:none;
+    color:black;
+}
 .title {
     font-weight: 600;
     margin: 8px 0;
@@ -169,7 +174,7 @@ body {
     <div class="post top">
         <div class="header">
             <div class="avatar"></div>
-            <div class="username">@ {{ post.author }}</div>
+            <div class="username"><a href="pieblogs/profile/post.user/">@ {{ post.author }}</a></div>
         </div>
         <div class="title">{{ post.title }}</div>
         <div class="content">{{ post.content }}</div>

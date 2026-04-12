@@ -155,7 +155,7 @@ body {
 <!-- PROFILE -->
 <div class="profile">
     <div class="profile-top">
-        <div class="avatar"></div>
+        <div class="avatar"><img src="{{ request.user.profile.profilepic }}" border-radius="50%" ></div>
 
         <div class="stats">
             <div><strong>{{ request.user.post_set.count }}</strong><br>Posts</div>
@@ -167,7 +167,7 @@ body {
 
     <div class="bio">
         <strong>@{{ request.user.username }}</strong><br>
-        Django Developer 🚀 | Building PieBlogs
+        {{ request.user.profile.bio }}
     </div>
 </div>
 
@@ -189,7 +189,7 @@ body {
             <div class="content">{{ post.content }}</div>
             {% if post.image %}
         <img src="{{ post.image.url }}" width="200">
-    {% endif %}
+            {% endif %}
 
             <div class="post-actions">
                 <div class="left-actions">❤️ 💬</div>
@@ -205,7 +205,7 @@ body {
                 </div>
             </div>
         </div>
-        {% endif %}
+        {% endif%}
         {% empty %}
             <p style="text-align:center; color:#777;">No posts yet 🚀</p>
         {% endfor %}
