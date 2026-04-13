@@ -4,6 +4,11 @@
 
 <style>
 /* GLOBAL */
+/* Add this to your GLOBAL section */
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     background: #f5f5f5;
@@ -28,7 +33,6 @@ body {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    
 }
 
 .stats {
@@ -85,6 +89,7 @@ body {
     padding: 14px;
     border-radius: 12px;
     margin-bottom: 12px;
+    wrap:nowrap;
     word-break: break-word;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     transition: transform 0.2s ease;
@@ -129,6 +134,20 @@ body {
 .right-actions a {
     color:black;
 }
+/*fix ui break */
+.profile, .post, .bio {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.avatar img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
 
 /* MOBILE TWEAKS */
 @media (max-width: 480px) {
@@ -148,6 +167,8 @@ body {
     .avatar {
         width: 60px;
         height: 60px;
+        object-fit: cover;
+
     }
 }
 </style>
@@ -159,12 +180,12 @@ body {
         {% if profile_user.profile.pfp %}
     <img src="{{ profile_user.profile.pfp.url }}" width="80">
 {% else %}
-    <img src="/static/default.jpg" width="80">
+    <img src="/staticfiles/default.jpg" width="80">
 {% endif %}
         </div>
 
         <div class="stats">
-            <div><strong>{{ user.post_set.count }}</strong><br>Posts</div>
+            <div><strong>{{ profile_user.post_set.count }}</strong><br>Posts</div>
 
             <div><strong>100</strong><br>Followers</div>
             <div><strong>120</strong><br>Following</div>
@@ -187,47 +208,39 @@ body {
 
 <!-- FEED -->
 <div class="feed">
-
-    <!-- POSTS -->
-    <div id="posts">
-        {% for post in posts %}
-        
+    <div id="posts">    
+    {% for post in posts %}
         <div class="post">
             <div class="title">{{ post.title }}</div>
             <div class="content">{{ post.content }}</div>
+            
             {% if post.image %}
-        <img src="{{ post.image.url }}" width="200">
+                <img src="{{ post.image.url }}" width="200">
             {% endif %}
 
             <div class="post-actions">
                 <div class="left-actions">❤️ 💬</div>
-{% if request.user == post.author %}
+
+                {% if request.user == post.author %}
                 <div class="right-actions">
                     <a href="{% url 'post_edit' post.pk %}">
                         <i class="fa-solid fa-pen"></i>
                     </a>
-
                     <div onclick="openModal({{ post.pk }}, '{{ post.title }}')">
                         <i class="fa-solid fa-trash"></i>
                     </div>
                 </div>
-            </div>
-        </div>
-        {% endif%}
-        {% empty %}
-            <p style="text-align:center; color:#777;">No posts yet 🚀</p>
-        {% endfor %}
-    </div>
-
-    <!-- TAGS -->
-    <div id="tags" style="display:none;">
+                {% endif %} </div> </div> {% empty %}
+        <p style="text-align:center; color:#777;">No posts yet 🚀</p>
+    {% endfor %}
+    </div> <div id="tags" style="display:none;">
         <div class="post">
             <div class="title">#django</div>
             <div class="content">Posts related to django will appear here</div>
         </div>
     </div>
-
 </div>
+
 
 <!-- JS -->
 <script>
