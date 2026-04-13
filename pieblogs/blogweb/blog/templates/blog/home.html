@@ -159,7 +159,12 @@ body {
 <div id="searchbar" class="search-bar-section">
     <div class="search-input-wrapper">
       <span class="search-icon">🔍</span>
-      <input type="text" placeholder="Search PieBlogs..." class="search-field">
+      <input list="users" type="text" placeholder="Search PieBlogs..." class="search-field">
+      <datalist id="users">
+      {% for user in users %}
+       <option value="{{ user.username }}
+      {% endfor %}
+      </datalist>
     </div>
   </div>
 <!-- Tabs -->
@@ -174,7 +179,7 @@ body {
     <div class="post top">
         <div class="header">
             <div class="avatar"></div>
-            <div class="username"><a href="pieblogs/profile/post.user/">@ {{ post.author }}</a></div>
+            <div class="username"><a href="{% url 'profile' post.author %}">@ {{ post.author }}</a></div>
         </div>
         <div class="title">{{ post.title }}</div>
         <div class="content">{{ post.content }}</div>
