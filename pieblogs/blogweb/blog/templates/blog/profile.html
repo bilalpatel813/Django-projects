@@ -140,12 +140,20 @@ body {
     word-wrap: break-word;
 }
 
-.avatar img {
-    width: 70px;
-    height: 70px;
+.avatar {
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    object-fit: cover;
+    overflow: hidden;
+    margin:auto;
+    border: 1px solid #667eea;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+.avatar img {
+    object-fit: cover;
+    object-position: center top ; /* default but explicit */
+}
+
 
 
 
@@ -168,7 +176,6 @@ body {
         width: 60px;
         height: 60px;
         object-fit: cover;
-
     }
 }
 </style>
@@ -177,11 +184,14 @@ body {
 <div class="profile">
     <div class="profile-top">
         <div class="avatar">
-        {% if profile_user.profile.pfp %}
-    <img src="{{ profile_user.profile.pfp.url }}" width="80">
-{% else %}
-    <img src="/staticfiles/default.jpg" width="80">
-{% endif %}
+        {% load static %}
+
+    {% if profile_user.profile and profile_user.profile.profilepic %}
+        <img src="{{ profile_user.profile.profilepic.url }}" width="80">
+    {% else %}
+        <img src="{% static 'images/default.jpg' %}" width="80">
+    {% endif %}
+
         </div>
 
         <div class="stats">

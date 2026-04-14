@@ -301,7 +301,13 @@ body {
             <div class="settings-header">
                 <div class="user-profile">
                     <div class="avatar">
-                        <i class="fa-solid fa-user"></i>
+                     {% load static %}
+{% if users.profile.profilepic %}
+<img src="{{ user.profile.profilepic.url }}" width="80">
+{% else %}
+        <img src="{% static 'images/default.jpg' %}" width="80">
+        {% endif %}
+       
                     </div>
                     <span class="username">@{{ request.user.username }}</span>
                 </div>

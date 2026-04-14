@@ -1,18 +1,41 @@
-from django.shortcuts import render,get_object_or_404
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.shortcuts import render,get_object_or_404,redirect
 from django.views import View
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,DetailView
 from django.urls import reverse_lazy
 from .models import Post
 # Create your views here. 
+@method_decorator(cache_page(30),name='dispatch')
 class HomeView(LoginRequiredMixin,ListView):
      model=Post 
      template_name="blog/home.html"
      context_object_name="posts"
-     
-     
+     def get(self, request, *args, **kwargs):
+         query = request.GET.get('q')
+         if query:
+             try:
+                 user = User.objects.get(username=query)
+                 return redirect('profile', username=user.username)
+             except User.DoesNotExist:
+                   pass
+
+         return super().get(request, *args, **kwargs)
+     def get_context_data(self,**kwargs):
+          context = super().get_context_data(**kwargs)
+          query=self.request.GET.get("q")
+          users= User.objects.exclude(id=self.request.user.id)
+          print("query run for users")
+          if query:
+              users=users.filter(username__icontains=query)
+              context['query']=query
+              context['users']=users
+          return context
+        
+        
 class ProfileView(LoginRequiredMixin,UserPassesTestMixin,ListView):
     login_url='login'
     model= Post
@@ -26,7 +49,7 @@ class ProfileView(LoginRequiredMixin,UserPassesTestMixin,ListView):
     def get_queryset(self):
         username = self.kwargs.get('username')
         
-        return Post.objects.filter(author__username=username)
+        return Post.objects.filter(author__username=username).order_by("-created_at")
     def get_context_data(self, **kwargs):
          context = super().get_context_data(**kwargs)
          context['profile_user']= get_object_or_404(
@@ -66,7 +89,20 @@ class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     def test_func(self):
         post=self.get_object()
         return self.request.user == post.author
+    
+class SearchView(ListView):
+    def search_user(self,request):
+        query=request.GET.get('q','')
         
+        if query:
+            users=User.objects.filter(username__icontains=query)[:5]
+         
+        data=[]   
+        for user in users:
+            data.append({
+                'username':user.username
+            })
+        return JsonResponse({'users':data})
     
         
         
