@@ -1,3 +1,7 @@
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import PostSerializer
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from django.shortcuts import render,get_object_or_404,redirect
@@ -57,6 +61,8 @@ class ProfileView(LoginRequiredMixin,UserPassesTestMixin,ListView):
     )
          print(self.kwargs)
          return context
+         
+     
         
 class PostListView(ListView):
     model= Post
@@ -104,7 +110,57 @@ class SearchView(ListView):
             })
         return JsonResponse({'users':data})
     
+class PostListApi(APIView):
+    def get(self,request):
+        posts=Post.objects.all()
+        serializer=PostSerializer(posts,many=True)
+        print("Get api used ")
+        return Response(serializer.data)
+    def post(self,request):
+        serializer=PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            print("Post api is used")
+            return Response(serializer.data)
+        return Response(serializer.errors)
+     
+
+class PostDetailApi(APIView):
+    def get_object(self,pk):
+        return Post.objects.get(pk=pk)
         
+    def get(self,request,pk):
+        posts=self.get_object(pk)
+        serializer=PostSerializer(posts)
+        print("Get api used for single post  ")
+        return Response(serializer.data)
+    def post(self,request,pk):
+        posts=self.get_object(pk)
+        serializer=PostSerializer(posts,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            print("Post api is used for single post ")
+            return Response(serializer.data)
+        return Response(serializer.errors)
+     
+    def put(self,request,pk):
+        posts=self.get_object(pk)
+        serializer=PostSerializer(posts,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            print("put api is usedfor single post")
+            return Response(serializer.data)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,request,pk):
+        posts=self.get_object(pk)
+        posts.delete()
+        print("delete api used for post :",posts)
+        return Response(status=204)
+            
+
+        
+                
         
     
     
