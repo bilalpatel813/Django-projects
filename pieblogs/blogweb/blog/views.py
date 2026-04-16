@@ -1,4 +1,6 @@
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import PostSerializer
@@ -109,7 +111,9 @@ class SearchView(ListView):
                 'username':user.username
             })
         return JsonResponse({'users':data})
-    
+  
+  
+#By manual api creation   
 class PostListApi(APIView):
     def get(self,request):
         posts=Post.objects.all()
@@ -157,6 +161,12 @@ class PostDetailApi(APIView):
         posts.delete()
         print("delete api used for post :",posts)
         return Response(status=204)
+        
+#by Viewsets from DRF
+class PostSetView(ModelViewSet):
+    queryset= Post.objects.all()
+    serializer_class= PostSerializer
+    permission_classes=[IsAuthenticated]
             
 
         
