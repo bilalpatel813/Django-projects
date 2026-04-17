@@ -8,7 +8,7 @@ router.register('posts',views.PostSetView)
 
 
 urlpatterns=[
-path('',include(router.urls)),
+path('api/',include(router.urls)),
 path("",views.HomeView.as_view(),name='home'),
 path("home/",views.HomeView.as_view(),name='home'),
 path("postslist/",views.PostListView.as_view(),name='Post_list'),

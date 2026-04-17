@@ -9,7 +9,7 @@ class CustomSignUp(UserCreationForm):
         model = User
         fields=['username','email','password1','password2']
         
-class CustomBioPfp(UserCreationForm):
+class CustomBioPfp(forms.ModelForm):
     
     class Meta:
         model=profile

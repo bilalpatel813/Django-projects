@@ -72,7 +72,7 @@ class ResendOTP(View):
             return redirect('create-account')
         EmailOTP.objects.filter(user=user).delete()
         otp=generate_otp()
-        print('new otp generated')
+        print('new otp generated',otp)
         EmailOTP.objects.create(user=user,otp=otp)
         send_email(user,otp)
         print("new email sent")
