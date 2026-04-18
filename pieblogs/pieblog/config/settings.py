@@ -29,7 +29,7 @@ SECRET_KEY =os.getenv("SECRET_KEY")
 DEBUG = os.getenv('DEBUG','False') == True
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://django-projects-n0fm.onrender.com/']
 
 
 # Application definition
