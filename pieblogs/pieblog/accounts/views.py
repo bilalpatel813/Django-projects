@@ -2,7 +2,7 @@ from datetime import timedelta
 from django.utils.timezone import now
 from django.shortcuts import render,redirect
 from django.views import View
-from django.views.generic import CreateView
+from django.views.generic import CreateView,UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from accounts.forms import CustomSignUp,CustomBioPfp
@@ -37,26 +37,48 @@ class Send_OTP(View):
     def post(self,request):
         entered_otp=request.POST.get('otp')
         user_id=request.session.get('otp_user')
-        otp_obj= EmailOTP.objects.filter(user_id=user_id).last()
+        otp_obj= EmailOTP.objects.filter(user_id=user_id).order_by("-created_at").first()
         attempts=request.session.get('otp_attempts',0)
+        if not otp_obj:
+            return render(request, 'accounts/otp_varify.html', {'error': 'No OTP found'})
+
+    #  Reset attempts after 2 mins
+        if now() > otp_obj.created_at + timedelta(minutes=2):
+            request.session['otp_attempts'] = 0
+        attempts = request.session.get('otp_attempts', 0)
+        print("attempt by user", attempts)
+
+    # Check max attempts
         if attempts > 3:
-            return render(request,'accounts/otp_varify.html',{'error':'Too many attempts try again later!'})
-        request.session['otp_attempts']=attempts+1
-        if now() > otp_obj.created_at+timedelta(minutes=5):
-            return render(request,'accounts/otp_varify.html',{'error':'OTP Expired! '})
-            
-        if otp_obj and otp_obj.otp == entered_otp:
-            request.session['otp_attempts']=0
-            user=User.objects.get(id=user_id)
-            user.is_active=True
+            return render(request, 'accounts/otp_varify.html', {
+            'error': 'Too many attempts. Try again later!'
+        })
+
+    # Check expiry
+        if now() > otp_obj.created_at + timedelta(minutes=5):
+            return render(request, 'accounts/otp_varify.html', {
+            'error': 'OTP Expired!'
+        })
+        print("user_entered_otp: ",entered_otp)
+        print("DB otp :",otp_obj.otp)
+    # Verify OTP
+        if otp_obj.otp == entered_otp:
+            request.session['otp_attempts'] = 0
+            user = User.objects.get(id=user_id)
+            user.is_active = True
             user.save()
             otp_obj.delete()
-            print("error in otp validation")
-            login(request,user)
+
+            login(request, user)
+
             print('user signed in by otp verify')
             return redirect('createbiopfp')
-            
-        return render(request,'accounts/otp_varify.html',{'error':'invalid OTP'})
+
+    # Increases attempts on failure
+            request.session['otp_attempts'] = attempts + 1
+            return render(request, 'accounts/otp_varify.html', {
+        'error': 'Invalid OTP'
+    })
 
 
 class ResendOTP(View):
@@ -79,11 +101,12 @@ class ResendOTP(View):
         return redirect('verify-otp') 
         
         
-class CreateBioPfp(CreateView):
+class CreateBioPfp(UpdateView):
           form_class=CustomBioPfp
           template_name='accounts/create_bio.html'
           success_url=reverse_lazy('home')
-          
+          def get_object(self):
+              return self.request.user.profile          
 
     
     

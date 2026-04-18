@@ -27,10 +27,16 @@ SECRET_KEY =os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG','False') == True
+#DEBUG =True
 
+ALLOWED_HOSTS = ['django-projects-n0fm.onrender.com']
 
-ALLOWED_HOSTS = ['https://django-projects-n0fm.onrender.com/']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://django-projects-n0fm.onrender.com',
+
+]
 
 # Application definition
 REST_FRAMEWORK={
@@ -137,7 +143,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
