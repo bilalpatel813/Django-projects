@@ -135,6 +135,11 @@ body {
         <button type="submit" class="login-btn">Login</button>
 
     </form>
+{% if form.non_field_errors %}
+<div style="color:red;">
+    {{ form.non_field_errors }}
+</div>
+{% endif %}
 
 </div>
 

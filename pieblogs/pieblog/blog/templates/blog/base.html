@@ -257,18 +257,18 @@ body {
     <div class="nav-icons">
 
         <div class="nav-item">
-            <div class="logo"><a href="/pieblogs/home/">PieBlogs</a></div>
+            <div class="logo"><a href="{% url 'home' %}">PieBlogs</a></div>
         </div>
 
         <div class="nav-item">
-            <a href="/pieblogs/home/">
+            <a href="{% url 'home' %}">
                 <i class="fa-solid fa-house"></i>
                
             </a>
         </div>
 
         <div class="nav-item">
-            <a href="/pieblogs/create/">
+            <a href="{% url 'post_create' %}">
                 <i class="fa-solid fa-plus"></i>
                 
             </a>
@@ -337,7 +337,7 @@ body {
 
             <div class="divider"></div>
 
-            <a href="/pieblogs/login/" class="settings-item logout-item">
+            <a href="{% url 'login' %}" class="settings-item logout-item">
                 <i class="fa-solid fa-right-from-bracket"></i>
                 <span>Logout</span>
             </a>
@@ -384,7 +384,7 @@ function openModal(postId,title) {
     // set form action dynamically
 document.getElementById("modalText").innerText =
         "Are you sure you want to delete '"+title+"'?";
-  document.getElementById("deleteform").action = `/pieblogs/delete/${postId}/`;
+  document.getElementById("deleteform").action = "/delete/"+ postId ;
 }
 
 function closeModal() {

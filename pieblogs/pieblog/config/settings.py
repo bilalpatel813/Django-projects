@@ -29,13 +29,16 @@ SECRET_KEY =os.getenv("SECRET_KEY")
 DEBUG = os.getenv('DEBUG','False') == True
 #DEBUG =True
 
-ALLOWED_HOSTS = ['django-projects-n0fm.onrender.com']
+ALLOWED_HOSTS = [
+'django-projects-n0fm.onrender.com',
+'127.0.0.1'
+]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CSRF_TRUSTED_ORIGINS = [
     'https://django-projects-n0fm.onrender.com',
-
+'http://127.0.0.1:8000/'
 ]
 
 # Application definition

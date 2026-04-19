@@ -14,11 +14,11 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse,JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,DetailView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from .models import Post
 # Create your views here. 
 @method_decorator(cache_page(30),name='dispatch')
-class HomeView(LoginRequiredMixin,ListView):
+class HomeView(ListView):
      model=Post 
      template_name="blog/home.html"
      context_object_name="posts"
@@ -95,7 +95,8 @@ class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
 class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model= Post
     template_name="blog/profile.html"
-    success_url=reverse_lazy("profile")
+    def get_success_url(self):
+        return reverse('profile',kwargs={'username':self.request.user.username})
     def test_func(self):
         post=self.get_object()
         return self.request.user == post.author
