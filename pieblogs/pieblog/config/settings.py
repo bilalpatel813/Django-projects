@@ -29,9 +29,7 @@ SECRET_KEY =os.getenv("SECRET_KEY")
 DEBUG = os.getenv('DEBUG','False') == True
 #DEBUG =True
 
-ALLOWED_HOSTS = [
-'django-projects-n0fm.onrender.com',
-'127.0.0.1'
+ALLOWED_HOSTS = ['*'
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
