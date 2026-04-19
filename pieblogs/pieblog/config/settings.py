@@ -30,13 +30,13 @@ DEBUG = os.getenv('DEBUG','False') == True
 #DEBUG =True
 
 ALLOWED_HOSTS = [
-'https://pieblogs.onrender.com/'
+'pieblogs.onrender.com'
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://django-projects-n0fm.onrender.com',
+    'https://pieblogs.onrender.com',
 'http://127.0.0.1:8000/'
 ]
 
