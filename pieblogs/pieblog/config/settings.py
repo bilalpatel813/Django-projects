@@ -29,7 +29,8 @@ SECRET_KEY =os.getenv("SECRET_KEY")
 DEBUG = os.getenv('DEBUG','False') == True
 #DEBUG =True
 
-ALLOWED_HOSTS = ['*'
+ALLOWED_HOSTS = [
+'https://pieblogs.onrender.com/'
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
