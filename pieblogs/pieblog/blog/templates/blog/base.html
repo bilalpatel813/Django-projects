@@ -50,6 +50,57 @@ body {
     text-decoration:none;
     color:black;
 }
+/* PLUS DROPDOWN */
+.plus-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.plus-menu {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    padding: 8px 0;
+    width: 150px;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+    z-index: 999;
+}
+
+/* Show on hover */
+.plus-wrapper:hover .plus-menu {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    pointer-events: auto;
+}
+
+/* Items */
+.plus-item {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+    transition: 0.2s;
+}
+
+.plus-item:hover {
+    background: #f5f7ff;
+}
+
+/* Icons */
+.plus-item i {
+    color: #667eea;
+}
 
 /* PFP */
 .pfp-nav {
@@ -267,12 +318,21 @@ body {
             </a>
         </div>
 
-        <div class="nav-item">
-            <a href="{% url 'post_create' %}">
-                <i class="fa-solid fa-plus"></i>
-                
-            </a>
-        </div>
+        <div class="nav-item plus-wrapper">
+
+    <i class="fa-solid fa-plus"></i>
+
+    <div class="plus-menu">
+        <a href="{% url 'post_create' %}" class="plus-item">
+            <i class="fa-solid fa-pen"></i> Create Post
+        </a>
+
+        <a href="#" class="plus-item">
+            <i class="fa-solid fa-blog"></i> Create Blog
+        </a>
+    </div>
+
+</div>
 
         <div class="nav-item">
             <a href="javascript:void(0)" onclick="togglesearch()"> 
@@ -389,6 +449,30 @@ document.getElementById("modalText").innerText =
 
 function closeModal() {
     document.getElementById("deleteModal").style.display = "none";
+}
+
+const plus = document.querySelector(".plus-wrapper");
+
+plus.addEventListener("click", function(e){
+    e.stopPropagation();
+    const menu = this.querySelector(".plus-menu");
+
+    menu.style.opacity = menu.style.opacity === "1" ? "0" : "1";
+    menu.style.pointerEvents = menu.style.pointerEvents === "auto" ? "none" : "auto";
+});
+
+document.addEventListener("click", function(){
+    document.querySelector(".plus-menu").style.opacity = "0";
+    document.querySelector(".plus-menu").style.pointerEvents = "none";
+});
+<--for post images -->
+function preview(e){
+    const file = e.target.files[0];
+    if(file){
+        document.getElementById("pfpImg").src = URL.createObjectURL(file);
+        document.getElementById("pfpImg").style.display = "block";
+        document.getElementById("pfpText").style.display = "none";
+    }
 }
 </script>
 

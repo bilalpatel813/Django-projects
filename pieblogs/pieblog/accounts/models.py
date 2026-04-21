@@ -20,3 +20,12 @@ class EmailOTP(models.Model):
         return f'{self.user.username} - {self.otp}'
         
  
+class follow(models.Model):
+    followers=models.ForeignKey('auth.User',related_name='followings',on_delete=models.CASCADE)
+    followings=models.ForeignKey('auth.User',related_name='followers',on_delete=models.CASCADE)
+    class Meta:
+        constraints=[
+        models.UniqueConstraint(fields=['followers','followings'],name = 'unique_follower_following')]
+        
+        
+    

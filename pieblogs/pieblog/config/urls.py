@@ -23,9 +23,8 @@ urlpatterns = [
 path('admin/', admin.site.urls),
 path("api/token/",TokenObtainPairView.as_view(),name='token_obtain'), 
 path("api/token/refresh/",TokenRefreshView.as_view(),name='token_refersh'),
- path("",include('accounts.urls')),
-   path('',include('blog.urls')),
-    
 
+ path("",include('accounts.urls')),
+ path('',include('blog.urls')),
 ]
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

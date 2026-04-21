@@ -26,11 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY =os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG','False') == True
-#DEBUG =True
+#DEBUG = os.getenv('DEBUG','False') == True
+DEBUG =True
 
 ALLOWED_HOSTS = [
-'pieblogs.onrender.com'
+'pieblogs.onrender.com',
+'127.0.0.1'
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

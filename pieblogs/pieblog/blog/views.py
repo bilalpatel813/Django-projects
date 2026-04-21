@@ -1,3 +1,4 @@
+from .paginations import FeedPagination
 from .permissions import IsAuthor
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -15,6 +16,7 @@ from django.http import HttpResponse,JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,DetailView
 from django.urls import reverse_lazy,reverse
+from accounts.models import follow
 from .models import Post
 # Create your views here. 
 @method_decorator(cache_page(30),name='dispatch')
@@ -176,8 +178,17 @@ class PostSetView(ModelViewSet):
         serializer.save(author=self.request.user)
           
 
+class Feed(APIView):
+    def get(self,request):
+        following_user=follow.objects.filter(followers=request.user).values_list('followings',flat=True)
         
-                
+        feed=Feed.objects.filter(user__in=following_user).select_related('user').order_by('-created-at')
+        paginator=Feedpagination()
+        page=paginator.paginate_querset(feed,request)
+        serializer=FeedSerializer(page,many=True)
+        
+        return paginator.get_paginated_response(serializer.data)
+        
         
     
     

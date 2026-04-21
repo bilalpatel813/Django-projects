@@ -6,7 +6,6 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register('posts',views.PostSetView)
 
-
 urlpatterns=[
 path('api/',include(router.urls)),
 path("",views.HomeView.as_view(),name='home'),
@@ -16,6 +15,6 @@ path("create/",views.PostCreateView.as_view(),name='post_create'),
 path("edit/<int:pk>/",views.PostUpdateView.as_view(),name="post_edit"),
 path("<str:username>/",views.ProfileView.as_view(),name="profile"),
 path("delete/<int:pk>/",views.PostDeleteView.as_view(),name="delete"),
-#path("api/posts/",views.PostListApi.as_view()),
+path("api/feed/",views.Feed.as_view()),
 #path("api/posts/<int:pk>/",views.PostDetailApi.as_view())
 ]
