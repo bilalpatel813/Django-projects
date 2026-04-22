@@ -154,7 +154,28 @@ body {
     object-position: center top ; /* default but explicit */
 }
 
+.follow-bar {
+    width: 100%;
+    margin-top: 10px;
+    text-align: center;
+}
 
+#followBtn {
+    width: 100%;
+    padding: 6px;
+    border: none;
+    border-radius: 8px;
+    background: #667eea;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#followBtn.following {
+    background: #ddd;
+    color: #333;
+}
 
 
 /* MOBILE TWEAKS */
@@ -207,7 +228,13 @@ body {
         {{ profile_user.profile.bio }}
         {% endif %}
     </div>
-    
+    {% if not is_own_profile %}
+    <div class="follow-bar">
+    <button id="followBtn" onclick="toggleFollow()">
+        Follow
+    </button>
+</div>
+    {% endif %}
 </div>
 
 <!-- TABS -->
@@ -219,24 +246,24 @@ body {
 <!-- FEED -->
 <div class="feed">
     <div id="posts">    
-    {% for post in posts %}
+    {% for blog in blogs %}
         <div class="post">
-            <div class="title">{{ post.title }}</div>
-            <div class="content">{{ post.content }}</div>
+            <div class="title">{{ blog.title }}</div>
+            <div class="content">{{ blog.content }}</div>
             
-            {% if post.image %}
-                <img src="{{ post.image.url }}" width="200">
+            {% if blog.image %}
+                <img src="{{ blog.image.url }}" width="200">
             {% endif %}
 
             <div class="post-actions">
                 <div class="left-actions">❤️ 💬</div>
 
-                {% if request.user == post.author %}
+                {% if request.user == blog.author %}
                 <div class="right-actions">
-                    <a href="{% url 'post_edit' post.pk %}">
+                    <a href="{% url 'post_edit' blog.pk %}">
                         <i class="fa-solid fa-pen"></i>
                     </a>
-                    <div onclick="openModal({{ post.pk }}, '{{ post.title }}')">
+                    <div onclick="openModal({{ blog.pk }}, '{{ blog.title }}')">
                         <i class="fa-solid fa-trash"></i>
                     </div>
                 </div>
@@ -252,8 +279,19 @@ body {
 </div>
 
 
-<!-- JS -->
+
 <script>
+function toggleFollow() {
+    let btn = document.getElementById("followBtn");
+
+    if (btn.classList.contains("following")) {
+        btn.classList.remove("following");
+        btn.innerText = "Follow";
+    } else {
+        btn.classList.add("following");
+        btn.innerText = "Following";
+    }
+}
 function switchTab(type, event) {
     document.getElementById("posts").style.display =
         (type === 'posts') ? 'block' : 'none';

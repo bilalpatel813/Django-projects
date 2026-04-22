@@ -182,7 +182,7 @@ body {
 
 <!-- Feed -->
 <div class="feed">
-{% for post in posts %}
+{% for blog in blogs %}
     <div class="post top">
         <div class="header">
             <div class="avatar">
@@ -194,12 +194,12 @@ body {
         <img src="{% static 'images/default.jpg' %}" width="80">
         {% endif %}
     </div>
-            <div class="username"><a href="{% url 'profile' post.author %}">@ {{ post.author }}</a></div>
+            <div class="username"><a href="{% url 'profile' blog.author %}">@ {{ blog.author }}</a></div>
         </div>
-        <div class="title">{{ post.title }}</div>
-        <div class="content">{{ post.content }}</div>
-        {% if post.image %}
-        <img src="{{ post.image.url }}" width="200">
+        <div class="title">{{ blog.title }}</div>
+        <div class="content">{{ blog.content }}</div>
+        {% if blog.image %}
+        <img src="{{ blog.image.url }}" width="200">
     {% endif %}
         <div class="actions">
             ❤️ 💬

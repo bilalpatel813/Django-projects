@@ -6,7 +6,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import PostSerializer
+from .serializers import PostSerializer,FeedSerializer
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from django.shortcuts import render,get_object_or_404,redirect
@@ -17,13 +17,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,DetailView
 from django.urls import reverse_lazy,reverse
 from accounts.models import follow
-from .models import Post
+from .models import Blog,Post
 # Create your views here. 
 @method_decorator(cache_page(30),name='dispatch')
 class HomeView(ListView):
-     model=Post 
+     model=Blog
      template_name="blog/home.html"
-     context_object_name="posts"
+     context_object_name="blogs"
      def get(self, request, *args, **kwargs):
          query = request.GET.get('q')
          if query:
@@ -48,46 +48,49 @@ class HomeView(ListView):
         
 class ProfileView(LoginRequiredMixin,UserPassesTestMixin,ListView):
     login_url='login'
-    model= Post
+    model= Blog
     template_name="blog/profile.html"
     slug_field = 'username'
     slug_url_kwarg = 'username'
-    context_object_name="posts"
+    context_object_name="blogs"
     def test_func(self):
             return self.request.user.is_authenticated
        
     def get_queryset(self):
         username = self.kwargs.get('username')
         
-        return Post.objects.filter(author__username=username).order_by("-created_at")
+        return Blog.objects.filter(author__username=username).order_by("-created_at")
     def get_context_data(self, **kwargs):
-         context = super().get_context_data(**kwargs)
-         context['profile_user']= get_object_or_404(
+         profile_user=get_object_or_404(
         User, username=self.kwargs['username']
     )
+         is_own_profile= profile_user == self.request.user
+         context = super().get_context_data(**kwargs)
+         context['profile_user']=profile_user        
+         context['is_own_profile']=is_own_profile 
          print(self.kwargs)
          return context
          
      
         
 class PostListView(ListView):
-    model= Post
+    model= Blog
     template_name="blog/Post_list.html"
-    context_object_name="posts"
+    context_object_name="blogs"
 
 class PostCreateView(LoginRequiredMixin,CreateView):
-        model= Post
+        model= Blog
         fields=['title','content','image']
-        template_name="blog/post_form.html"
+        template_name="blog/Blog_form.html"
         success_url=reverse_lazy("home")
         def form_valid(self,form):
             form.instance.author=self.request.user
             return super().form_valid(form)
         
 class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
-    model=Post
+    model=Blog
     fields=['title','content']
-    templates="blog/post_form.html"
+    templates="blog/Blog_form.html"
     success_url=reverse_lazy("profile")
     def test_func(self):
         post=self.get_object()
@@ -95,7 +98,7 @@ class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         
 
 class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
-    model= Post
+    model= Blog
     template_name="blog/profile.html"
     def get_success_url(self):
         return reverse('profile',kwargs={'username':self.request.user.username})
@@ -121,7 +124,7 @@ class SearchView(ListView):
 #By manual api creation   
 class PostListApi(APIView):
     def get(self,request):
-        posts=Post.objects.all()
+        posts=Blog.objects.all()
         serializer=PostSerializer(posts,many=True)
         print("Get api used ")
         return Response(serializer.data)
@@ -136,7 +139,7 @@ class PostListApi(APIView):
 
 class PostDetailApi(APIView):
     def get_object(self,pk):
-        return Post.objects.get(pk=pk)
+        return Blog.objects.get(pk=pk)
         
     def get(self,request,pk):
         posts=self.get_object(pk)
@@ -169,22 +172,25 @@ class PostDetailApi(APIView):
         
 #by Viewsets from DRF
 class PostSetView(ModelViewSet):
-    queryset= Post.objects.all()
+    queryset= Blog.objects.all()
     serializer_class= PostSerializer
     permission_classes=[IsAuthenticated,IsAuthor]
     filter_backends=[SearchFilter]
     search_fields=['title']
     def perform_create(self,serializer):
         serializer.save(author=self.request.user)
-          
+      
+      
+class follower(CreateView):
+    pass    
 
-class Feed(APIView):
+class FeedAPI(APIView):
     def get(self,request):
         following_user=follow.objects.filter(followers=request.user).values_list('followings',flat=True)
         
-        feed=Feed.objects.filter(user__in=following_user).select_related('user').order_by('-created-at')
-        paginator=Feedpagination()
-        page=paginator.paginate_querset(feed,request)
+        feed=Post.objects.filter(user__in=following_user).select_related('user').order_by('-created_at')
+        paginator=FeedPagination()
+        page=paginator.paginate_queryset(feed,request)
         serializer=FeedSerializer(page,many=True)
         
         return paginator.get_paginated_response(serializer.data)

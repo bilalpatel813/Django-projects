@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User 
 # Create your models here.
-class Post(models.Model):
+class Blog(models.Model):
     title=models.CharField(max_length=200)
     content=models.TextField()
     image=models.ImageField(upload_to="blogs/",blank=True,null=True)
@@ -12,7 +12,7 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
-class Feed(models.Model):
+class Post(models.Model):
     user=models.ForeignKey('auth.User',on_delete=models.CASCADE)
     image=models.ImageField(upload_to='feed/post/')
     caption=models.TextField()

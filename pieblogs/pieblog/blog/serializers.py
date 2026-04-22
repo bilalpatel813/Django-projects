@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import Post,Feed
+from .models import Post,Blog
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Post
+        model=Blog
         fields='__all__'
 class FeedSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Feed
+        model=Post
         fields=['id','user','image','caption','created_at']
     
