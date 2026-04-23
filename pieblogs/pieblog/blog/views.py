@@ -35,14 +35,17 @@ class HomeView(ListView):
 
          return super().get(request, *args, **kwargs)
      def get_context_data(self,**kwargs):
+         
           context = super().get_context_data(**kwargs)
           query=self.request.GET.get("q")
           users= User.objects.exclude(id=self.request.user.id)
           print("query run for users")
           if query:
               users=users.filter(username__icontains=query)
-              context['query']=query
-              context['users']=users
+          posts = Post.objects.all().order_by("-created_at")
+          context['query']=query
+          context['posts']=posts
+          context['users']=users
           return context
         
         
@@ -61,15 +64,17 @@ class ProfileView(LoginRequiredMixin,UserPassesTestMixin,ListView):
         
         return Blog.objects.filter(author__username=username).order_by("-created_at")
     def get_context_data(self, **kwargs):
-         profile_user=get_object_or_404(
+        context = super().get_context_data(**kwargs)
+        profile_user = get_object_or_404(
         User, username=self.kwargs['username']
     )
-         is_own_profile= profile_user == self.request.user
-         context = super().get_context_data(**kwargs)
-         context['profile_user']=profile_user        
-         context['is_own_profile']=is_own_profile 
-         print(self.kwargs)
-         return context
+        posts = Post.objects.filter(user=profile_user).order_by("-created_at")
+        context['posts'] = posts
+        context['profile_user'] = profile_user
+        context['is_own_profile'] = profile_user == self.request.user
+        context['post_count'] = posts.count()
+
+        return context
          
      
         
@@ -79,6 +84,15 @@ class PostListView(ListView):
     context_object_name="blogs"
 
 class PostCreateView(LoginRequiredMixin,CreateView):
+        model= Post
+        fields=['caption','image']
+        template_name="blog/Post_form.html"
+        success_url=reverse_lazy("home")
+        def form_valid(self,form):
+            form.instance.user=self.request.user
+            return super().form_valid(form)
+
+class BlogCreateView(LoginRequiredMixin,CreateView):
         model= Blog
         fields=['title','content','image']
         template_name="blog/Blog_form.html"

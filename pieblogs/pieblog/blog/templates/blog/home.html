@@ -1,30 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PieBlogs</title>
+{% extends 'blog/base.html' %}
+{% load static %}
 
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Pacifico&display=swap" rel="stylesheet">
-
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% block content %}
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.feed {
+    max-width: 600px;
+    margin: auto;
 }
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #f5f5f5;
-    animation: fadePage 0.5s ease;
+/* Card */
+.card {
+    background: white;
+    border-radius: 14px;
+    margin: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
+/* Header */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
 
+.card-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-user img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.card-user span {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Image */
+.card-image img {
+    width: 100%;
+    display: block;
+}
+
+/* Content */
+.card-content {
+    padding: 10px;
+}
+
+.card-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #555;
+}
+
+/* Friends smaller text */
+.friends .card-text {
+    font-size: 12px;
+    color: #777;
+}
+
+/* Actions */
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.left-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.card-actions i {
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.card-actions i:hover {
+    color: #667eea;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: center;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    color: #777;
+    font-size:13px
+}
+
+.tab.active {
+    color: black;
+    border-bottom: 2px solid #667eea;
+}
 /* The search bar section */
 .search-bar-section {
     display:none;
@@ -58,107 +145,8 @@ body {
 .search-field::placeholder {
   color:#667eea ;
 }
-/* Tabs */
-.tabs {
-    display: flex;
-    justify-content: center;
-    background: white;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #ddd;
-}
 
-.tab {
-    padding: 10px 20px;
-    cursor: pointer;
-    color: #777;
-    border-bottom: 2px solid transparent;
-}
-
-.tab.active {
-    color: black;
-    border-bottom: 2px solid #667eea;
-    font-weight: 500;
-}
-
-/* Feed */
-.feed {
-    max-width: 600px;
-    margin: auto;
-}
-
-/* Post */
-.post {
-    background: white;
-    margin: 10px;
-    padding: 15px;
-    border-radius: 12px;
-    animation: fadeUp 0.5s ease;
-}
-
-.header {
-    display: flex;
-    align-items: center;
-}
-.avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1px solid #667eea;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.avatar img {
-    object-fit: cover;
-    object-position: center top ; /* default but explicit */
-}
-
-.username {
-    font-weight: 600;
-    font-size: 14px;
-    
-}
-
-.username a {
-    text-decoration:none;
-    color:black;
-}
-.title {
-    font-weight: 600;
-    margin: 8px 0;
-}
-
-.content {
-    font-size: 14px;
-    color: #555;
-}
-
-/* Actions */
-.actions {
-    margin-top: 10px;
-    display: flex;
-    gap: 15px;
-    color: #777;
-}
-
-
-/* Animations */
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px);}
-    to { opacity: 1; transform: translateY(0);}
-}
-
-@keyframes fadePage {
-    from { opacity: 0;}
-    to { opacity: 1;}
-}
 </style>
-</head>
-
-<body>
-{% extends 'blog/base.html' %}
-{% block nav %}
-{% endblock %}
-{% block content %}
 
 <div id="searchbar" class="search-bar-section">
 <form method='get'>
@@ -176,50 +164,122 @@ body {
   </div>
 <!-- Tabs -->
 <div class="tabs">
-    <div class="tab active" onclick="switchTab('top')">Top Posts</div>
+    <div class="tab active" onclick="switchTab('blogs')">Top Blogs</div>
     <div class="tab" onclick="switchTab('friends')">Friends</div>
+    <div class="tab" onclick="switchTab('posts')">Top Posts</div>
 </div>
 
-<!-- Feed -->
 <div class="feed">
+
+<!-- BLOGS -->
 {% for blog in blogs %}
-    <div class="post top">
-        <div class="header">
-            <div class="avatar">
-         
-              {% load static %}
-{% if users.profile.profilepic %}
-<img src="{{ user.profile.profilepic.url }}" width="80">
-{% else %}
-        <img src="{% static 'images/default.jpg' %}" width="80">
-        {% endif %}
-    </div>
-            <div class="username"><a href="{% url 'profile' blog.author %}">@ {{ blog.author }}</a></div>
+<div class="card blogs">
+
+    <div class="card-header">
+        <div class="card-user">
+            {% if blog.author.profile.profilepic %}
+                <img src="{{ blog.author.profile.profilepic.url }}">
+            {% else %}
+                <img src="{% static 'images/default.jpg' %}">
+            {% endif %}
+            <span>@{{ blog.author.username }}</span>
         </div>
-        <div class="title">{{ blog.title }}</div>
-        <div class="content">{{ blog.content }}</div>
-        {% if blog.image %}
-        <img src="{{ blog.image.url }}" width="200">
+        <i class="fa-solid fa-ellipsis"></i>
+    </div>
+
+    {% if blog.image %}
+    <div class="card-image">
+        <img src="{{ blog.image.url }}">
+    </div>
     {% endif %}
-        <div class="actions">
-            ❤️ 💬
-        </div>
+
+    <div class="card-content">
+        <div class="card-title">{{ blog.title }}</div>
+        <div class="card-text">{{ blog.content }}</div>
     </div>
+
+    <div class="card-actions">
+        <div class="left-actions">
+            <i class="fa-regular fa-heart"></i>
+            <i class="fa-regular fa-comment"></i>
+        </div>
+        <i class="fa-regular fa-bookmark"></i>
+    </div>
+
+</div>
 {% endfor %}
-    <div class="post friends" style="display:none;">
-        <div class="header">
-            <div class="avatar"></div>
-            <div class="username">@friend</div>
+
+
+<!--  FRIENDS -->
+<div class="card friends" style="display:none;">
+
+    <div class="card-header">
+        <div class="card-user">
+            <img src="{% static 'images/default.jpg' %}">
+            <span>@friend_user</span>
         </div>
-        <div class="title">Friend Post</div>
-        <div class="content">Friends-only content 👀</div>
-        <div class="actions">
-            ❤️ 💬
+        <i class="fa-solid fa-ellipsis"></i>
+    </div>
+
+    <div class="card-content">
+        <div class="card-title">Friends Post</div>
+        <div class="card-text">This is friends-only content 👀</div>
+    </div>
+
+    <div class="card-actions">
+        <div class="left-actions">
+            <i class="fa-regular fa-heart"></i>
+            <i class="fa-regular fa-comment"></i>
         </div>
+        <i class="fa-regular fa-bookmark"></i>
     </div>
 
 </div>
 
+
+<!--  POSTS -->
+{% for post in posts %}
+<div class="card posts" style="display:none;">
+
+    <div class="card-header">
+        <div class="card-user">
+            {% if post.user.profile.profilepic %}
+                <img src="{{ post.user.profile.profilepic.url }}">
+            {% else %}
+                <img src="{% static 'images/default.jpg' %}">
+            {% endif %}
+            <span>@{{ post.user.username }}</span>
+        </div>
+        <i class="fa-solid fa-ellipsis"></i>
+    </div>
+
+    {% if post.image %}
+    <div class="card-image">
+        <img src="{{ post.image.url }}">
+    </div>
+    {% endif %}
+
+    <div class="card-content">
+        <div class="card-text">
+            <b>@{{ post.user.username }}</b> {{ post.caption }}
+        </div>
+    </div>
+
+    <div class="card-actions">
+        <div class="left-actions">
+            <i class="fa-regular fa-heart"></i>
+            <i class="fa-regular fa-comment"></i>
+            <i class="fa-regular fa-paper-plane"></i>
+        </div>
+        <i class="fa-regular fa-bookmark"></i>
+    </div>
+
+</div>
+{% endfor %}
+
+</div>
+
+<!-- JS -->
 <script>
 function togglesearch(){
     let search= document.getElementById("searchbar");
@@ -233,21 +293,19 @@ function switchTab(type){
     let tabs = document.querySelectorAll('.tab');
     tabs.forEach(t => t.classList.remove('active'));
 
-    if(type === 'top'){
-        tabs[0].classList.add('active');
-    } else {
-        tabs[1].classList.add('active');
-    }
+    const map = { blogs:0, friends:1, posts:2 };
+    tabs[map[type]]?.classList.add('active');
 
-    document.querySelectorAll('.top').forEach(p=>{
-        p.style.display = (type==='top') ? 'block':'none';
-    });
-
-    document.querySelectorAll('.friends').forEach(p=>{
-        p.style.display = (type==='friends') ? 'block':'none';
+    ['blogs','friends','posts'].forEach(section => {
+        document.querySelectorAll('.' + section).forEach(el => {
+            el.style.display = (type === section) ? 'block' : 'none';
+        });
     });
 }
+
+window.onload = function(){
+    switchTab('blogs');
+}
 </script>
+
 {% endblock %}
-</body>
-</html>

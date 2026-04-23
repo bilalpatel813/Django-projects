@@ -14,7 +14,7 @@ class Blog(models.Model):
 
 class Post(models.Model):
     user=models.ForeignKey('auth.User',on_delete=models.CASCADE)
-    image=models.ImageField(upload_to='feed/post/')
+    image=models.ImageField(upload_to='feed/post/',null=True)
     caption=models.TextField()
     created_at=models.DateTimeField(auto_now_add=True,db_index=True)
     

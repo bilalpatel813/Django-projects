@@ -42,13 +42,12 @@ body{
 
 /* Labels */
 .labelpfp {
-    text-align:left;
+    text-align:center;
     font-size:13px;
     font-weight:500;
     margin:10px 0 10px;
     color:#555;
-    margin-left:120px;
-}
+}  
 
 .label{
     text-align:left;
@@ -106,27 +105,30 @@ textarea{
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    margin-top: 10px;
+    margin-top:10px;
 }
 
-button {
+.buttons button {
     flex: 1;
     padding: 12px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
+    
 }
-
 .cancel {
 
     border-radius: 10px;
     background: #eee;
     text-align: center;
     text-decoration: none;
-    color: black;
+    color: black; 
     display: inline-block;
 }
-
+.cancel a {
+    text-decoration: none;
+    color: black;
+}
 .preview {
     background: #ffd166;
 }
@@ -155,7 +157,7 @@ button {
 {% csrf_token %}
 <!-- PFP -->
 <label class="pfp">
-<input type="file" hidden onchange="preview(event)">
+<input type="file" name='image' hidden onchange="preview(event)">
 <span id="pfpText">Tap to upload</span>
 <img id="pfpImg">
 </label>
@@ -164,20 +166,16 @@ button {
 
 <div class="label">Add Caption</div>
 
-<textarea placeholder="Create caption.."></textarea>
+<textarea placeholder="Create caption.." name='caption'></textarea>
 
   <div class="buttons">
-      <div class="cancel"><a href="/pieblogs/profile/">Cancel</a></div>
+      <button class="cancel"><a href="{% url 'profile' user.username %}">Cancel</a></button>
       <button type="button" class="preview">Preview</button>
       <button type="submit" class="publish">Publish</button>
   </div>
 </form>
 </div>
 
-</div>
-
-<div class="footer">
-© PieBlogs — made with ❤️
 </div>
 
 <script>

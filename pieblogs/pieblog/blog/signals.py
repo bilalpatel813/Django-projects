@@ -6,5 +6,5 @@ from .models import Post
 @receiver(post_save,sender=Post)
 def create_post(sender,instance,created,**kwargs):
     if created:
-        print("New post Created!!",instance.title ,"by",instance.author )
+        print("New post Created!!" ,"by",instance.user)
         

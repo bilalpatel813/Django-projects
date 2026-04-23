@@ -3,51 +3,68 @@
 {% block content %}
 
 <style>
-/* GLOBAL */
-/* Add this to your GLOBAL section */
-* {
-    box-sizing: border-box;
-}
+/* GLOBAL & PAGE BACKGROUND */
+* { box-sizing: border-box; }
+body { font-family: 'Poppins', sans-serif; background: #f5f5f5; margin: 0; }
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #f5f5f5;
-    margin: 0;
-}
-
-/* PROFILE */
+/* PROFILE SECTION - MATCHING SCREENSHOT */
 .profile {
     background: white;
-    padding: 20px;
+    padding: 30px 20px 20px 20px;
 }
 
 .profile-top {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* responsive */
-    gap: 10px;
+    justify-content: space-around; /* Better spacing for stats */
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 .avatar {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #667eea;
 }
+
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .stats {
     display: flex;
-    gap: 15px;
+    gap: 18px;
     text-align: center;
-    flex-wrap: wrap;
 }
 
 .stats div {
     font-size: 14px;
+    color: #111;
+    line-height: 1.2;
+}
+
+.stats strong {
+    font-size: 13px;
+    display: block;
+    font-weight: 600;
 }
 
 .bio {
-    margin-top: 10px;
+    max-width: 500px;
+    margin: 15px auto 0 auto;
+    text-align: left;
+    padding: 0 10px;
+}
+
+.bio strong {
+    font-size: 16px;
+    color: #333;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.bio p {
+    margin: 0;
     font-size: 14px;
     color: #555;
 }
@@ -57,250 +74,196 @@ body {
     display: flex;
     background: white;
     border-top: 1px solid #eee;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #eee;
 }
 
 .tab {
     flex: 1;
     text-align: center;
-    padding: 12px;
+    padding: 15px;
     cursor: pointer;
-    color: #777;
-    font-size: 14px;
+    color: #888;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 .tab.active {
-    color: black;
+    color: #111;
     border-bottom: 2px solid #667eea;
-    font-weight: bold;
 }
 
-/* FEED */
-.feed {
-    max-width: 600px;
-    margin: auto;
-    padding: auto;
-    width: 100%;
+/* FEED & CARDS */
+.feed { max-width: 600px; margin: 10px auto; }
+
+/* BLOG & POST CARD STYLE */
+.item-card {
+    background: white;
+    border-radius: 16px;
+    margin: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
-/* POST CARD */
-.post {
-    background: #fff;
-    padding: 14px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    wrap:nowrap;
-    word-break: break-word;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    transition: transform 0.2s ease;
-}
-
-.post:active {
-    transform: scale(0.98); /* mobile touch feel */
-}
-
-.title {
-    font-weight: 600;
-    font-size: 16px;
-}
-
-.content {
-    font-size: 14px;
-    color: #555;
-    margin-top: 5px;
-}
-
-/* ACTIONS */
-.post-actions {
+.card-header {
+    padding: 12px;
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
+    align-items: center;
 }
 
-.left-actions {
-    color: #777;
-}
+.user-info { display: flex; align-items: center; gap: 8px; }
+.user-info img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.user-info span { font-weight: 600; font-size: 14px; }
 
-.right-actions {
+.card-img { width: 100%; display: block; }
+
+.card-body { padding: 12px; }
+.card-title { font-weight: 700; font-size: 16px; margin-bottom: 5px; }
+.card-text { font-size: 14px; color: #444; line-height: 1.5; }
+
+/* ACTIONS */
+.actions-bar {
     display: flex;
-    gap: 12px;
+    justify-content: space-between;
+    padding: 12px;
+    border-top: 1px solid #f9f9f9;
 }
 
-.right-actions i {
-    font-size: 18px;
-    padding: 6px;
-    cursor: pointer;
-}
-.right-actions a {
-    color:black;
-}
-/*fix ui break */
-.profile, .post, .bio {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-}
+.left-actions { display: flex; gap: 15px; font-size: 18px; color: #333; }
+.right-actions { display: flex; gap: 15px; font-size: 16px; color: #111; }
+.right-actions a { color: inherit; text-decoration: none; }
 
-.avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin:auto;
-    border: 1px solid #667eea;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.avatar img {
-    object-fit: cover;
-    object-position: center top ; /* default but explicit */
-}
-
-.follow-bar {
-    width: 100%;
-    margin-top: 10px;
-    text-align: center;
-}
-
+.follow-bar { max-width: 500px; margin: 15px auto; }
 #followBtn {
-    width: 100%;
-    padding: 6px;
-    border: none;
-    border-radius: 8px;
-    background: #667eea;
-    color: white;
-    font-weight: 500;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-#followBtn.following {
-    background: #ddd;
-    color: #333;
-}
-
-
-/* MOBILE TWEAKS */
-@media (max-width: 480px) {
-    .title {
-        font-size: 15px;
-    }
-
-    .content {
-        font-size: 13px;
-    }
-
-    .tab {
-        font-size: 13px;
-        padding: 10px;
-    }
-
-    .avatar {
-        width: 60px;
-        height: 60px;
-        object-fit: cover;
-    }
+    width: 100%; padding: 8px; border-radius: 8px; border: none;
+    background: #667eea; color: white; font-weight: 600; cursor: pointer;
 }
 </style>
 
-<!-- PROFILE -->
 <div class="profile">
     <div class="profile-top">
         <div class="avatar">
-        {% load static %}
-
-    {% if profile_user.profile and profile_user.profile.profilepic %}
-        <img src="{{ profile_user.profile.profilepic.url }}" width="80">
-    {% else %}
-        <img src="{% static 'images/default.jpg' %}" width="80">
-    {% endif %}
-
+            {% load static %}
+            {% if profile_user.profile.profilepic %}
+                <img src="{{ profile_user.profile.profilepic.url }}">
+            {% else %}
+                <img src="{% static 'images/default.jpg' %}">
+            {% endif %}
         </div>
 
         <div class="stats">
-            <div><strong>{{ profile_user.post_set.count }}</strong><br>Posts</div>
-
-            <div><strong>100</strong><br>Followers</div>
-            <div><strong>120</strong><br>Following</div>
+            <div><strong>{{ profile_user.blog_set.count }}</strong>Blogs</div>
+            <div><strong>100</strong>Followers</div>
+            <div><strong>120</strong>Following</div>
         </div>
     </div>
 
     <div class="bio">
-     {% if profile_user.profile %}   <strong>@{{ profile_user.username }}</strong><br>
-        {{ profile_user.profile.bio }}
-        {% endif %}
+        <strong>@{{ profile_user.username }}</strong>
+        <p>{{ profile_user.profile.bio}}</p>
     </div>
+
     {% if not is_own_profile %}
     <div class="follow-bar">
-    <button id="followBtn" onclick="toggleFollow()">
-        Follow
-    </button>
-</div>
+        <button id="followBtn" onclick="toggleFollow()">Follow</button>
+    </div>
     {% endif %}
 </div>
 
-<!-- TABS -->
 <div class="tabs">
-    <div class="tab active" onclick="switchTab('posts', event)">Posts</div>
-    <div class="tab" onclick="switchTab('tags', event)">Tags</div>
+    <div class="tab active" onclick="switchTab('blogs-section', event)">Blogs</div>
+    <div class="tab" onclick="switchTab('posts-section', event)">Posts</div>
+    <div class="tab" onclick="switchTab('tags-section', event)">Tags</div>
 </div>
 
-<!-- FEED -->
 <div class="feed">
-    <div id="posts">    
-    {% for blog in blogs %}
-        <div class="post">
-            <div class="title">{{ blog.title }}</div>
-            <div class="content">{{ blog.content }}</div>
-            
-            {% if blog.image %}
-                <img src="{{ blog.image.url }}" width="200">
-            {% endif %}
+    
+    <div id="blogs-section">    
+        {% for blog in blogs %}
+            <div class="item-card">
+                <div class="card-body">
+                    <div class="card-title">{{ blog.title }}</div>
+                    <div class="card-text">{{ blog.content }}</div>
+                    {% if blog.image %}<img src="{{ blog.image.url }}" class="card-img" style="margin-top:10px; border-radius:8px;">{% endif %}
+                </div>
+                <div class="actions-bar">
+                    <div class="left-actions">
+                        <i class="fa-regular fa-heart"></i>
+                        <i class="fa-regular fa-comment"></i>
+                    </div>
+                    {% if request.user == blog.author %}
+                    <div class="right-actions">
+                        <a href="{% url 'post_edit' blog.pk %}"><i class="fa-solid fa-pen"></i></a>
+                        <i class="fa-solid fa-trash" style="cursor:pointer;" onclick="openModal({{ blog.pk }}, '{{ blog.title }}')"></i>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p style="text-align:center; color:#777; padding-top:40px;">No blogs yet 🚀</p>
+        {% endfor %}
+    </div> 
 
-            <div class="post-actions">
-                <div class="left-actions">❤️ 💬</div>
+    <div id="posts-section" style="display:none;">
+        {% for post in posts %}
+            <div class="item-card">
+                <div class="card-header">
+                    <div class="user-info">
+                        <img src="{% if post.user.profile.profilepic %}{{ post.user.profile.profilepic.url }}{% else %}{% static 'images/default.jpg' %}{% endif %}">
+                        <span>@{{ post.user.username }}</span>
+                    </div>
+                    <i class="fa-solid fa-ellipsis"></i>
+                </div>
 
-                {% if request.user == blog.author %}
-                <div class="right-actions">
-                    <a href="{% url 'post_edit' blog.pk %}">
-                        <i class="fa-solid fa-pen"></i>
-                    </a>
-                    <div onclick="openModal({{ blog.pk }}, '{{ blog.title }}')">
-                        <i class="fa-solid fa-trash"></i>
+                {% if post.image %}<img src="{{ post.image.url }}" class="card-img">{% endif %}
+
+                <div class="card-body">
+                    <div class="card-text"><b>@{{ post.user.username }}</b> {{ post.caption }}</div>
+                </div>
+
+                <div class="actions-bar">
+                    <div class="left-actions">
+                        <i class="fa-regular fa-heart"></i>
+                        <i class="fa-regular fa-comment"></i>
+                        <i class="fa-regular fa-paper-plane"></i>
+                    </div>
+                    
+                    <div class="right-actions">
+                        {% if is_own_profile %}
+                            <a href="#"><i class="fa-solid fa-pen"></i></a>
+                            <i class="fa-solid fa-trash" style="cursor:pointer;"></i>
+                        {% else %}
+                            <i class="fa-regular fa-bookmark"></i>
+                        {% endif %}
                     </div>
                 </div>
-                {% endif %} </div> </div> {% empty %}
-        <p style="text-align:center; color:#777;">No posts yet 🚀</p>
-    {% endfor %}
-    </div> <div id="tags" style="display:none;">
-        <div class="post">
-            <div class="title">#django</div>
-            <div class="content">Posts related to django will appear here</div>
-        </div>
+            </div>
+        {% empty %}
+            <p style="text-align:center; color:#777; padding-top:40px;">No posts yet 📸</p>
+        {% endfor %}
     </div>
+
+    <div id="tags-section" style="display:none;">
+        <div class="item-card"><div class="card-body">#django content goes here...</div></div>
+    </div>
+
 </div>
 
-
-
 <script>
+function switchTab(sectionId, event) {
+    ['blogs-section', 'posts-section', 'tags-section'].forEach(id => {
+        document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
+    });
+    document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+    event.currentTarget.classList.add("active");
+}
+
 function toggleFollow() {
     let btn = document.getElementById("followBtn");
-
-    if (btn.classList.contains("following")) {
-        btn.classList.remove("following");
-        btn.innerText = "Follow";
-    } else {
-        btn.classList.add("following");
-        btn.innerText = "Following";
-    }
-}
-function switchTab(type, event) {
-    document.getElementById("posts").style.display =
-        (type === 'posts') ? 'block' : 'none';
-
-    document.getElementById("tags").style.display =
-        (type === 'tags') ? 'block' : 'none';
-
-    document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
-    event.target.classList.add("active");
+    btn.classList.toggle("following");
+    btn.innerText = btn.classList.contains("following") ? "Following" : "Follow";
+    btn.style.background = btn.classList.contains("following") ? "#efefef" : "#667eea";
+    btn.style.color = btn.classList.contains("following") ? "#111" : "white";
 }
 </script>
 

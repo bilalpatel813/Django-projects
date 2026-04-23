@@ -25,13 +25,18 @@ body {
     font-family: 'Pacifico', cursive;
     text-align: center;
     font-size: 22px;
+}
+
+.logo a {
     color: #667eea;
+    text-decoration: none;
 }
 
 .nav-icons {
     display: flex;
     justify-content: space-around;
     padding: 10px;
+    align-items: center;
 }
 
 .nav-item {
@@ -50,10 +55,12 @@ body {
     text-decoration:none;
     color:black;
 }
+
 /* PLUS DROPDOWN */
 .plus-wrapper {
     position: relative;
     display: inline-block;
+    cursor: pointer;
 }
 
 .plus-menu {
@@ -66,21 +73,18 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     padding: 8px 0;
     width: 150px;
-
     opacity: 0;
     pointer-events: none;
     transition: 0.2s;
     z-index: 999;
 }
 
-/* Show on hover */
 .plus-wrapper:hover .plus-menu {
     opacity: 1;
     transform: translateX(-50%) scale(1);
     pointer-events: auto;
 }
 
-/* Items */
 .plus-item {
     padding: 10px 15px;
     display: flex;
@@ -97,27 +101,15 @@ body {
     background: #f5f7ff;
 }
 
-/* Icons */
 .plus-item i {
     color: #667eea;
+    margin: 0;
+    padding: 0;
+    display: inline;
 }
 
-/* PFP */
-.pfp-nav {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: #667eea;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    margin: auto;
-    cursor: pointer;
-}
-
-/*OVERLAY */
-.overlay{
+/* OVERLAY */
+.overlay {
     display:none;
     position: fixed;
     top:0;
@@ -132,24 +124,14 @@ body {
     animation: fadeIn 0.3s ease;
 }
 
-/* Animation */
 @keyframes fadeIn {
-    from {opacity:0;}
-    to {opacity:1;}
+     from {opacity:0;} to {opacity:1;}
+      }
+@keyframes slideUp { 
+from { transform: translateY(40px); opacity:0; } to { transform: translateY(0); opacity:1; } 
+
 }
 
-@keyframes slideUp {
-    from {
-        transform: translateY(40px);
-        opacity:0;
-    }
-    to {
-        transform: translateY(0);
-        opacity:1;
-    }
-}
-
-/* Container */
 .settings-container {
     width:100%;
     max-width:360px;
@@ -157,7 +139,6 @@ body {
     animation: slideUp 0.3s ease;
 }
 
-/* Card */
 .settings-card {
     background:white;
     border-radius:25px;
@@ -165,7 +146,7 @@ body {
     overflow:hidden;
 }
 
-/* Header */
+/* Header Fix */
 .settings-header {
     display:flex;
     justify-content:space-between;
@@ -179,15 +160,21 @@ body {
     gap:10px;
 }
 
-.avatar {
+.settings-avatar {
     width:38px;
     height:38px;
     background:#667eea;
     border-radius:50%;
+    overflow: hidden; /* Fix image overflow */
     display:flex;
     align-items:center;
     justify-content:center;
-    color:white;
+}
+
+.settings-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .username {
@@ -195,9 +182,7 @@ body {
     font-size:16px;
 }
 
-/* Close button */
 .close-btn {
-    flex: unset !important; 
     background:#f0f2f5;
     border:none;
     width:32px;
@@ -206,13 +191,11 @@ body {
     cursor:pointer;
 }
 
-/* Divider */
 .divider {
     height:1px;
     background:#eee;
 }
 
-/* Items */
 .settings-item {
     display:flex;
     align-items:center;
@@ -239,15 +222,8 @@ body {
     background:#f8f9ff;
 }
 
-/* Logout */
-.logout-item i {
-    background:#ffecec;
-    color:#e63946;
-}
-
-.logout-item span {
-    color:#e63946;
-}
+.logout-item i { background:#ffecec; color:#e63946; }
+.logout-item span { color:#e63946; }
 
 /* Delete Modal */
 .modal {
@@ -269,29 +245,32 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
-.model-content p {
-    color:
-}
+
 .delete-btn {
     background: red;
     color: white;
     border: none;
     margin-top:10px;
-    margin-left:80px;
-    margin-bottom:10px;
-    width:80px;
-    height:20px;
+    display: block;
+    margin-inline: auto;
+    width:100px;
+    height:30px;
     border-radius:30px;
+    cursor: pointer;
 }
 .cancel-btn{
     background:black;
     color:white;
-    margin-left:80px;
-    width:80px;
-    height:20px;
+    border: none;
+    margin-top: 10px;
+    display: block;
+    margin-inline: auto;
+    width:100px;
+    height:30px;
     border-radius:30px;
+    cursor: pointer;
 }
-/* Footer */
+
 .footer {
     text-align: center;
     font-size: 12px;
@@ -303,10 +282,8 @@ body {
 
 <body>
 
-<!-- NAVBAR -->
 <div class="topbar">
     <div class="nav-icons">
-
         <div class="nav-item">
             <div class="logo"><a href="{% url 'home' %}">PieBlogs</a></div>
         </div>
@@ -314,64 +291,50 @@ body {
         <div class="nav-item">
             <a href="{% url 'home' %}">
                 <i class="fa-solid fa-house"></i>
-               
             </a>
         </div>
 
         <div class="nav-item plus-wrapper">
-
-    <i class="fa-solid fa-plus"></i>
-
-    <div class="plus-menu">
-        <a href="{% url 'post_create' %}" class="plus-item">
-            <i class="fa-solid fa-pen"></i> Create Post
-        </a>
-
-        <a href="#" class="plus-item">
-            <i class="fa-solid fa-blog"></i> Create Blog
-        </a>
-    </div>
-
-</div>
+            <i class="fa-solid fa-plus"></i>
+            <div class="plus-menu">
+                <a href="{% url 'post_create' %}" class="plus-item">
+                    <i class="fa-solid fa-pen"></i> Create Post
+                </a>
+                <a href="{% url 'blog_create' %}" class="plus-item">
+                    <i class="fa-solid fa-blog"></i> Create Blog
+                </a>
+            </div>
+        </div>
 
         <div class="nav-item">
             <a href="javascript:void(0)" onclick="togglesearch()"> 
                 <i class="fa-solid fa-magnifying-glass"></i>
-                
             </a>
         </div>
 
-        <!-- 🔥 PFP (REPLACED PROFILE ICON) -->
         <div class="nav-item">
-            <div  onclick="openSettings()">
+            <div onclick="openSettings()" style="cursor:pointer">
                 <i class="fa-solid fa-user"></i>
             </div>
-            
         </div>
-
     </div>
 </div>
-<!-- 🔥 SETTINGS MODAL -->
-<div class="overlay" id="settingsModal">
 
+<div class="overlay" id="settingsModal">
     <div class="settings-container">
         <div class="settings-card">
-
-            <!-- Header -->
             <div class="settings-header">
                 <div class="user-profile">
-                    <div class="avatar">
-                     {% load static %}
-{% if users.profile.profilepic %}
-<img src="{{ user.profile.profilepic.url }}" width="80">
-{% else %}
-        <img src="{% static 'images/default.jpg' %}" width="80">
-        {% endif %}
-       
+                    <div class="settings-avatar">
+                        {% load static %}
+                        {% if user.profile.profilepic %}
+                            <img src="{{ user.profile.profilepic.url }}" alt="Profile">
+                        {% else %}
+                            <img src="{% static 'images/default.jpg' %}" alt="Default">
+                        {% endif %}
                     </div>
                     <span class="username">@{{ request.user.username }}</span>
                 </div>
-
                 <button class="close-btn" onclick="closeSettings()">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -379,7 +342,6 @@ body {
 
             <div class="divider"></div>
 
-            <!-- Items -->
             <a href="{% url 'profile' user.username %}" class="settings-item">
                 <i class="fa-solid fa-circle-user"></i>
                 <span>Profile</span>
@@ -401,30 +363,23 @@ body {
                 <i class="fa-solid fa-right-from-bracket"></i>
                 <span>Logout</span>
             </a>
-
         </div>
     </div>
-
 </div>
 
-<!-- DELETE MODAL -->
 <div id="deleteModal" class="modal">
     <div class="modal-content">
         <p id='modalText'></p>
-
         <form id="deleteform" method='POST'>
              {% csrf_token %}
-            <button class="delete-btn" onclick="openModal({{ post.pk }}, '{{ post.title }}')" >Yes</button>
+            <button type="submit" class="delete-btn">Yes, Delete</button>
         </form>
-
         <button class="cancel-btn" onclick="closeModal()">Cancel</button>
     </div>
 </div>
 
-<!-- CONTENT -->
 {% block content %}{% endblock %}
 
-<!-- FOOTER -->
 <div class="footer">
     © PieBlogs — made with ❤️
 </div>
@@ -438,41 +393,33 @@ function closeSettings(){
     document.getElementById("settingsModal").style.display="none";
 }
 
-function openModal(postId,title) {
+function openModal(postId, title) {
     document.getElementById("deleteModal").style.display = "block";
-
-    // set form action dynamically
-document.getElementById("modalText").innerText =
-        "Are you sure you want to delete '"+title+"'?";
-  document.getElementById("deleteform").action = "/delete/"+ postId ;
+    document.getElementById("modalText").innerText = "Are you sure you want to delete '" + title + "'?";
+    document.getElementById("deleteform").action = "/delete/" + postId;
 }
 
 function closeModal() {
     document.getElementById("deleteModal").style.display = "none";
 }
 
+// Fixed dropdown logic to prevent immediate closing
 const plus = document.querySelector(".plus-wrapper");
-
 plus.addEventListener("click", function(e){
     e.stopPropagation();
     const menu = this.querySelector(".plus-menu");
-
-    menu.style.opacity = menu.style.opacity === "1" ? "0" : "1";
-    menu.style.pointerEvents = menu.style.pointerEvents === "auto" ? "none" : "auto";
+    const isOpen = menu.style.opacity === "1";
+    menu.style.opacity = isOpen ? "0" : "1";
+    menu.style.pointerEvents = isOpen ? "none" : "auto";
 });
 
 document.addEventListener("click", function(){
-    document.querySelector(".plus-menu").style.opacity = "0";
-    document.querySelector(".plus-menu").style.pointerEvents = "none";
-});
-function preview(e){
-    const file = e.target.files[0];
-    if(file){
-        document.getElementById("pfpImg").src = URL.createObjectURL(file);
-        document.getElementById("pfpImg").style.display = "block";
-        document.getElementById("pfpText").style.display = "none";
+    const menu = document.querySelector(".plus-menu");
+    if(menu) {
+        menu.style.opacity = "0";
+        menu.style.pointerEvents = "none";
     }
-}
+});
 </script>
 
 </body>
