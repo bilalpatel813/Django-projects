@@ -69,9 +69,22 @@ class ProfileView(LoginRequiredMixin,UserPassesTestMixin,ListView):
         User, username=self.kwargs['username']
     )
         posts = Post.objects.filter(user=profile_user).order_by("-created_at")
+        follower_count = follow.objects.filter(followings=profile_user).count()
+        following_count = follow.objects.filter(followers=profile_user).count()
+        if self.request.user.is_authenticated:
+            context['is_following'] = follow.objects.filter(
+            followers=self.request.user,
+            followings=profile_user
+            ).exists()
+        else:
+            context['is_following'] = False
+
         context['posts'] = posts
         context['profile_user'] = profile_user
         context['is_own_profile'] = profile_user == self.request.user
+        context['follower_count']=follower_count
+        context['following_count']=following_count
+        
         context['post_count'] = posts.count()
 
         return context
@@ -194,10 +207,38 @@ class PostSetView(ModelViewSet):
     def perform_create(self,serializer):
         serializer.save(author=self.request.user)
       
-      
-class follower(CreateView):
-    pass    
-
+class FollowListView(LoginRequiredMixin,ListView):
+    model=follow
+    template_name="blog/follow_list.html"
+    def get_queryset(self):
+        username = self.kwargs.get('username')
+    def get_context_data(self,**kwargs):
+         context = super().get_context_data(**kwargs)
+         profile_user = User.objects.get(username=self.kwargs['username'])
+         followers = follow.objects.filter(followings=profile_user)
+         followings = follow.objects.filter(followers=profile_user)  
+         follower_count = follow.objects.filter(followings=profile_user).count()
+         following_count = follow.objects.filter(followers=profile_user).count()
+         context['followers_count']=follower_count
+         context['followings_count']=following_count
+         context['followers']=followers
+         context['followings']=followings
+         return context
+               
+class Follow(LoginRequiredMixin,View):
+    def post(self,request,username):
+        target_user=get_object_or_404(User,username=username)
+        if request.user == target_user:
+            return redirect('profile',username=username)
+        follow_obj,created= follow.objects.get_or_create(
+        followers=request.user,
+        followings=target_user
+        )
+        print("followed:",username)
+        if not created:
+            follow_obj.delete()
+        return redirect('profile',username=username)
+             
 class FeedAPI(APIView):
     def get(self,request):
         following_user=follow.objects.filter(followers=request.user).values_list('followings',flat=True)

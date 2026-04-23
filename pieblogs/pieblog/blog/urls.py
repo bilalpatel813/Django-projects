@@ -17,5 +17,7 @@ path("edit/<int:pk>/",views.PostUpdateView.as_view(),name="post_edit"),
 path("<str:username>/",views.ProfileView.as_view(),name="profile"),
 path("delete/<int:pk>/",views.PostDeleteView.as_view(),name="delete"),
 path("api/feed/",views.FeedAPI.as_view()),
-#path("api/posts/<int:pk>/",views.PostDetailApi.as_view())
+#path("api/posts/<int:pk>/",views.PostDetailApi.as_view()),
+path("follow/<str:username>/",views.Follow.as_view(),name='follow'),
+path("<str:username>/follower/",views.FollowListView.as_view(),name='follow_list')
 ]

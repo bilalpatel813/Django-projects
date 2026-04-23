@@ -1,0 +1,126 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+
+<style>
+.container {
+    max-width: 500px;
+    margin: auto;
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab {
+    padding: 10px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.active {
+    border-bottom: 2px solid black;
+}
+
+.user-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.btn {
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.follow {
+    background: black;
+    color: white;
+}
+
+.unfollow {
+    background: #eee;
+}
+</style>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h3>@{{ user.username }}</h3>
+        <p>
+            Followers: {{ followers_count }} |
+            Following: {{ followings_count }}
+        </p>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('followers')">Followers</div>
+        <div class="tab" onclick="showTab('following')">Following</div>
+    </div>
+
+    <!-- FOLLOWERS LIST -->
+    <div id="followers">
+        {% for f in followers %}
+            <div class="user-row">
+                <span>@{{ f.followers.username }}</span>
+
+                {% if request.user != f.follower %}
+                <form method="POST" action="{% url 'follow_list' f.followers.username %}">
+                    {% csrf_token %}
+                    <button class="btn unfollow">Remove</button>
+                </form>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>No followers</p>
+        {% endfor %}
+    </div>
+
+    <!-- FOLLOWING LIST -->
+    <div id="following" style="display:none;">
+        {% for f in followings %}
+            <div class="user-row">
+                <span>@{{ f.followings.username }}</span>
+
+                {% if request.user != f.following %}
+                <form method="POST" action="{% url 'follow_list' f.followings.username %}">
+                    {% csrf_token %}
+                    <button class="btn unfollow">Unfollow</button>
+                </form>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>Not following anyone</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script>
+function showTab(tab) {
+    document.getElementById('followers').style.display = 'none';
+    document.getElementById('following').style.display = 'none';
+
+    document.getElementById(tab).style.display = 'block';
+    document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+    event.currentTarget.classList.add("active");
+}
+</script>
+
+{% endblock %}

@@ -26,6 +26,8 @@ class follow(models.Model):
     class Meta:
         constraints=[
         models.UniqueConstraint(fields=['followers','followings'],name = 'unique_follower_following')]
+    def __str__(self):
+        return f"{self.follower} follows {self.following}"
         
         
     
