@@ -342,7 +342,7 @@ from { transform: translateY(40px); opacity:0; } to { transform: translateY(0); 
 
             <div class="divider"></div>
 
-            <a href="{% url 'profile' user.username %}" class="settings-item">
+            <a href="{% url 'profile' request.user.username %}" class="settings-item">
                 <i class="fa-solid fa-circle-user"></i>
                 <span>Profile</span>
             </a>
