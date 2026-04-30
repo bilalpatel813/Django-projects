@@ -341,8 +341,11 @@ from { transform: translateY(40px); opacity:0; } to { transform: translateY(0); 
             </div>
 
             <div class="divider"></div>
-
+{% if request.user.is_authenticated and request.user.username %}
             <a href="{% url 'profile' request.user.username %}" class="settings-item">
+         {% else %}
+         <a href = "{% url 'login' %}" class="settings-item">
+         {% endif %}
                 <i class="fa-solid fa-circle-user"></i>
                 <span>Profile</span>
             </a>
