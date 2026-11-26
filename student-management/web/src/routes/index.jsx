@@ -4,6 +4,7 @@ import ProtectedRoute from './ProtectedRoute'
 import LoginPage from '../pages/LoginPage'
 import DashboardPage from '../pages/DashboardPage'
 import StudentsPage from '../pages/StudentsPage'
+import CourseNamesPage from '../pages/CourseNamesPage'
 import NotFoundPage from '../pages/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
         children: [
           { path: '/', element: <DashboardPage /> },
           { path: '/students', element: <StudentsPage /> },
+          { path: '/courses', element: <CourseNamesPage /> },
         ],
       },
     ],

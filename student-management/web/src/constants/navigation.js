@@ -13,7 +13,7 @@ export const NAV_ITEMS = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
   { label: 'Students', to: '/students', icon: GraduationCap },
   { label: 'Teachers', to: '/teachers', icon: Users, disabled: true },
-  { label: 'Courses', to: '/courses', icon: BookOpen, disabled: true },
+  { label: 'Course names', to: '/courses', icon: BookOpen },
   { label: 'Classes', to: '/classes', icon: School, disabled: true },
   { label: 'Attendance', to: '/attendance', icon: ClipboardCheck, disabled: true },
   { label: 'Reports', to: '/reports', icon: BarChart3, disabled: true },
