@@ -58,9 +58,9 @@ export default function RecentStudentsTable({ students = [], loading, onViewAll 
                 <button
                   type="button"
                   onClick={onViewAll}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 opacity-0 transition-opacity hover:text-brand-700 group-hover:opacity-100"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700"
                 >
-                  View <ArrowUpRight className="size-3.5" />
+                  View students <ArrowUpRight className="size-3.5" />
                 </button>
               </td>
             </tr>

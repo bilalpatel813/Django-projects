@@ -11,13 +11,7 @@ import AttendanceOverview from '../components/dashboard/AttendanceOverview'
 import PerformanceOverview from '../components/dashboard/PerformanceOverview'
 import ActivityFeed from '../components/dashboard/ActivityFeed'
 import PageHeader from '../components/dashboard/PageHeader'
-
-function weeklyDelta(stats) {
-  if (!stats) return undefined
-  const { students_this_week: now, students_previous_week: prev } = stats
-  if (!prev) return now ? 100 : 0
-  return Math.round(((now - prev) / prev) * 100)
-}
+import { weeklyDelta } from '../utils/format'
 
 export default function DashboardPage() {
   useDocumentTitle('Dashboard')
@@ -61,15 +55,15 @@ export default function DashboardPage() {
           icon={GraduationCap}
           tone="blue"
           delta={weeklyDelta(stats)}
-          hint="vs last week"
+          hint={stats?.students_previous_week === 0 && stats?.students_this_week > 0 ? 'No registrations in prior 7 days' : 'registrations vs prior 7 days'}
           loading={loading}
         />
         <StatCard
-          label="Total Teachers"
+          label="Staff Accounts"
           value={stats?.total_teachers}
           icon={Users}
           tone="green"
-          hint="active staff accounts"
+          hint="accounts marked as staff"
           loading={loading}
         />
         <StatCard
@@ -81,11 +75,11 @@ export default function DashboardPage() {
           loading={loading}
         />
         <StatCard
-          label="Total Classes"
+          label="Course Groupings"
           value={stats?.total_classes}
           icon={School}
           tone="amber"
-          hint="course groupings"
+          hint="distinct recorded courses"
           loading={loading}
         />
       </section>
@@ -110,7 +104,7 @@ export default function DashboardPage() {
         <Card className="@container">
           <CardHeader title="Course Distribution" subtitle="Top courses by enrollment" />
           <CardBody>
-            <DonutChart data={data?.course_distribution ?? []} loading={loading} />
+            <DonutChart data={data?.course_distribution ?? []} loading={loading} unitLabel="in top courses" />
           </CardBody>
         </Card>
       </section>

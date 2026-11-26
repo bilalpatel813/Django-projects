@@ -43,10 +43,10 @@ export default function StatCard({ label, value, icon: Icon, tone = 'blue', delt
             )}
           >
             <DeltaIcon className="size-3" />
-            {Math.abs(delta)}%
+            {delta > 0 ? '+' : delta < 0 ? '-' : ''}{Math.abs(delta)}%
           </span>
         ) : null}
-        {hint && !loading && <span className="truncate text-slate-400">{hint}</span>}
+        {hint && !loading && <span className="text-slate-400">{hint}</span>}
       </div>
     </div>
   )

@@ -1,164 +1,113 @@
-# Student Management System — Web Frontend
+# Student Management System: Web Frontend
 
-React (Vite) admin frontend for the Django REST backend in `../`. It ships a login
-screen and a fully API-driven dashboard.
+React and Vite frontend for the Django REST API in the parent directory. The
+dashboard, student management and read-only profile use the existing API.
 
-## Stack
+## Dependencies and installation
 
-| Concern | Choice |
-| --- | --- |
-| Build tool | Vite |
-| UI | React + JavaScript, Tailwind CSS v4 (`@tailwindcss/vite`) |
-| Routing | React Router DOM (`createBrowserRouter`) |
-| HTTP | Axios (JWT access + refresh interceptors) |
-| Icons | Lucide React |
-
-## Requirements
-
-- Node.js 20.19+ (or 22.12+) and npm
-- The Django backend running on `http://127.0.0.1:8000` (configurable)
-
-## Setup
+Use Node.js 20.19+ or 22.12+ and npm. Runtime dependencies are React, React DOM,
+React Router, Axios and Lucide React. Vite, its React and Tailwind CSS plugins,
+Tailwind CSS and Oxlint are development dependencies; exact resolved versions are
+recorded in `package-lock.json`.
 
 ```bash
 cd student-management/web
-npm install
-cp .env.example .env        # optional: only if you need to change the defaults
-npm run dev                 # http://localhost:5173
+npm ci
+cp .env.example .env   # optional; edit when changing defaults
+npm run dev            # http://localhost:5173
 ```
 
-## Environment variables
+Start the Django backend separately. The repository currently configures SQLite;
+PostgreSQL is not configured and must be set up at deployment. A working
+database and migrated backend are required for actual login and data operations.
 
-All API configuration lives in env vars — nothing is hardcoded.
+## Environment
 
-| Variable | Used by | Default | Meaning |
-| --- | --- | --- | --- |
-| `VITE_API_BASE_URL` | browser bundle | *(empty)* | API base, e.g. `https://api.example.com` for the existing Django root routes. Empty uses `/api` and requires a matching proxy. |
-| `VITE_PROXY_TARGET` | Vite dev server only | `http://127.0.0.1:8000` | Where `/api/*` requests are forwarded during `npm run dev`. |
-
-- `.env.development` is committed with working defaults.
-- For production, set `VITE_API_BASE_URL` before `npm run build` or configure a reverse proxy for `/api`.
-
-## Backend setup
-
-The backend already contains the dashboard endpoint the frontend consumes.
-It was not bootable from a fresh clone, so the following fixes were applied
-(no models or schema changes):
-
-```bash
-cd student-management
-python -m venv .venv && source .venv/bin/activate
-pip install django djangorestframework djangorestframework-simplejwt \
-            django-cors-headers python-dotenv whitenoise
-
-python manage.py migrate          # see migration limitation below before deploying
-python manage.py createsuperuser  # the account you log in with
-python manage.py runserver
-```
-
-If the SQLite database file is reachable, PostgreSQL can be configured later for
-deployment without touching this frontend.
-
-Allow the dev origin in CORS (defaults already cover it):
-
-```bash
-CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
-```
-
-## Scripts
-
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Vite dev server with `/api` proxy → `VITE_PROXY_TARGET` |
-| `npm run build` | Production build into `dist/` |
-| `npm run preview` | Serve the production build locally |
-| `npm run lint` | Oxlint (ships with the Vite template) |
-
-## Folder structure
-
-```
-web/
-├── public/favicon.svg
-├── index.html
-├── vite.config.js          # React + Tailwind plugins, /api dev proxy
-├── .env.example
-└── src/
-    ├── App.jsx             # Providers + router
-    ├── main.jsx            # Entry point
-    ├── index.css           # Tailwind import + brand theme tokens
-    ├── assets/
-    ├── components/
-    │   ├── ui/             # Button, Card, Badge, Avatar, Skeleton, states
-    │   ├── layout/         # reserved for layout-specific widgets
-    │   ├── dashboard/      # StatCard, GrowthChart, DonutChart, tables, panels
-    │   └── students/       # reserved for student feature components
-    ├── constants/          # storage keys, nav items
-    ├── context/            # AuthContext (JWT session), ToastContext
-    ├── hooks/              # useDashboardStats, useStudents, useMediaQuery, …
-    ├── layout/             # DashboardLayout, Sidebar, Topbar, Brand
-    ├── pages/              # LoginPage, DashboardPage, StudentsPage, NotFoundPage
-    ├── routes/             # router tree + ProtectedRoute guard
-    ├── services/           # http (axios), authService, dashboardService, studentService
-    └── utils/              # env, formatting, cn()
-```
-
-## API integration
-
-| UI | Endpoint (relative to `VITE_API_BASE_URL`) | Notes |
+| Variable | Default | Purpose |
 | --- | --- | --- |
-| Login | `POST /api/login` | Body `{ username, password }` → `{ user, access, refresh }` |
-| Session restore | `GET /api/Me` | Bearer access token |
-| Token refresh | `POST /api/token/refresh` | Automatic on 401 via interceptors |
-| Logout | `POST /api/logout` | Blacklists the refresh token |
-| Dashboard | `GET /api/dashboard/stats` | Aggregated stats returned by the dashboard endpoint below |
-| Students list | `GET /api/students/?page=N` | Paginated (`count`, `next`, `previous`, `results`) |
-| Student details | `GET /api/students/<uuid>/` | Fetches the selected student |
-| Add student | `POST /api/students/` | Sends the form fields to the existing serializer |
-| Edit student | `PATCH /api/students/<uuid>/` | Sends updated form fields |
-| Delete student | `DELETE /api/students/<uuid>/` | Requires confirmation in the UI |
+| `VITE_API_BASE_URL` | empty | Browser-visible API base. Empty uses `/api`. For a separately hosted Django API, use its root origin, e.g. `https://api.example.com`. |
+| `VITE_PROXY_TARGET` | `http://127.0.0.1:8000` | Backend target for the Vite development proxy only. |
 
-### `GET /api/dashboard/stats` (new endpoint)
+The Vite development proxy strips `/api` before forwarding to Django, whose
+routes are mounted at the root. In production, either set `VITE_API_BASE_URL`
+at build time to the deployed API root or configure a reverse proxy that strips
+`/api` in the same way. A nonempty base is used as supplied except for trailing
+slashes. Configure Django's `CORS_ALLOWED_ORIGINS` for the frontend origin if
+the browser talks to a different origin. Configure your web server to serve
+`index.html` for frontend routes such as `/profile` and `/students`.
 
-Authenticated (`IsAuthenticated`). Aggregates existing `Student` and `User`
-models only — no new models, no changes to existing response shapes.
+Vite embeds `VITE_` values in the public browser bundle. Never put secrets,
+credentials or private keys in these variables.
 
-```json
-{
-  "stats": {
-    "total_students": 24, "total_teachers": 2, "total_courses": 4, "total_classes": 4,
-    "students_added_today": 1, "students_this_week": 5, "students_previous_week": 3
-  },
-  "growth": [{ "month": "Jun", "students": 0 }, "…"],
-  "course_distribution": [{ "course": "Mathematics", "total": 6 }, "…"],
-  "gender_breakdown": [{ "gender": "Male", "total": 9 }, "…"],
-  "recent_students": [{ "id": "…", "name": "…", "email": "…", "course": "…", "enrollment_date": "…", "created_at": "…" }],
-  "activities": [{ "id": "student-…", "type": "enrollment", "title": "… enrolled", "description": "…", "timestamp": "…" }],
-  "attendance": [{ "day": "Mon", "present": 0, "absent": 0, "total": 0 }],
-  "performance": [{ "label": "Excellent", "count": 0 }],
-  "meta": {
-    "attendance_source": "unavailable",
-    "performance_source": "unavailable",
-    "attendance_days": 7,
-    "generated_at": "…"
-  }
-}
-```
+## Commands
 
-## Known limitations
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Development server and API proxy |
+| `npm test` | Frontend regression tests |
+| `npm run lint` | Oxlint checks |
+| `npm run build` | Production build in `dist/` |
+| `npm run preview` | Preview the built frontend; this does not provide the development API proxy |
 
-- **Attendance and performance panels show an explicit "not connected" state.**
-  The backend has no attendance, marks, exam or teacher-relationship model. The
-  endpoint returns empty placeholders flagged `unavailable` in `meta`; the UI
-  renders an honest empty state rather than inventing numbers. These panels
-  light up automatically when `meta.*_source` becomes `database`.
-- **Classes = distinct courses.** The schema has no class/section entity, so the
-  "Total Classes" metric counts distinct non-empty `Student.course` values.
-- **Teachers = staff users.** Counted from `User.objects.filter(is_staff=True)`.
-- **Teacher management is unavailable.** The backend exposes neither a teacher model nor teacher CRUD endpoints. The count of staff users is not a teacher directory or a management API.
-- **Student search loads all pages client-side** because the students API has no search parameter. Large datasets may take longer to search.
-- **Student authorization is broad.** The backend permits any authenticated user to read and change all students; it does not enforce staff or ownership restrictions.
-- **Fresh database migrations need attention.** In the current repository, `account/migrations` and `student/migrations` lack `__init__.py`; Django 5.2 treated these apps as unmigrated in verification. A normal `migrate` did not create their tables. Resolve and verify the migration strategy before deployment; no migration or schema changes are included here.
-- **Student pagination has no explicit ordering** in the backend, so pages may shift or repeat records while data changes.
-- **Token lifetimes need review.** The refresh token expires after 30 minutes, before the 60-minute access token; the existing frontend attempts refresh only after a 401, so an expired session may require a new login.
-- Sidebar sections marked *Soon* (Teachers, Courses, Classes, Attendance,
-  Reports, Settings) are placeholders for later phases.
+For production, set the public API configuration before `npm run build`, then
+deploy `dist/` to a static host with the API proxy and SPA fallback as needed.
+
+## Backend integration
+
+Paths below are Django root paths. When the frontend base is `/api`, requests
+have that prefix until the proxy removes it. Capitalization and trailing slashes
+matter.
+
+| Purpose | Endpoint |
+| --- | --- |
+| Sign in | `POST /login` with username and password |
+| Current account | `GET /Me` |
+| Refresh JWT | `POST /token/refresh` |
+| Sign out | `POST /logout` with the refresh token |
+| Dashboard | `GET /dashboard/stats` |
+| Student list/create | `GET`, `POST /students/` |
+| Student detail/update/delete | `GET`, `PATCH`, `DELETE /students/<uuid>/` |
+
+Authenticated requests use a bearer access token. Rotating refresh tokens are
+maintained while the page is active; the frontend retries an unauthorized
+request after refresh and signs out if authentication is rejected. A network
+outage can prevent server-side logout or refresh. Sessions may require a new
+login after inactivity, a lost rotation response, or a prolonged outage. The
+backend currently sets refresh tokens to 30 minutes and access tokens to 60
+minutes; review these lifetimes for deployment. Tokens are stored in local
+storage and are accessible to injected JavaScript; use HTTPS, a strong content
+security policy and an appropriate production authentication design.
+
+The backend returns only account ID, username and email for the profile. It has
+no profile-update, password-change or role API, so those actions and role-based
+navigation are not presented as available. Client-side route protection is not
+an authorization boundary; backend permissions are authoritative.
+
+## Deployment and verification limitations
+
+- **Authorization needs review before exposure.** Public registration is
+  enabled, and any authenticated user can read and modify all student records
+  and view dashboard aggregates. The backend does not enforce staff, role or
+  ownership restrictions for these endpoints.
+- **Production settings are not ready.** The backend has a hard-coded
+  development secret, `DEBUG=True`, and localhost-only `ALLOWED_HOSTS`. Use a
+  new private secret and production-safe configuration; do not reuse the
+  checked-in development key. Review HTTPS, CORS, logging and Django's
+  deployment checklist.
+- **Database and migrations need verification.** PostgreSQL is not configured.
+  The account and student migration directories lack `__init__.py`; prior
+  verification with Django 5.2 found that normal migrations did not create
+  their tables. Resolve the migration strategy and test against a fresh
+  deployment database before creating users or serving traffic. No schema or
+  migration changes are included in this frontend task.
+- Live login, refresh, logout, profile and student CRUD cannot be verified
+  end-to-end without a running backend and configured database. Test them,
+  including token rotation and server-side permissions, in the deployment
+  environment.
+- Student search and course-name grouping load all student pages client-side;
+  they may be slow on large datasets. Backend pagination has no explicit
+  ordering, so pages can shift when records change.
+- Course names are derived from students, not course management. Teacher,
+  class, attendance, report and settings sections without backend support are
+  unavailable. Dashboard staff counts are not a teacher directory; attendance
+  and performance data are unavailable.

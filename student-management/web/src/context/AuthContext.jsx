@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { authService } from '../services/authService'
-import { getAccessToken, saveTokens } from '../services/http'
+import { endSession, getSessionGeneration, readTokens, saveTokens, startTokenMaintenance } from '../services/http'
 import { TOKEN_STORAGE_KEY, USER_STORAGE_KEY } from '../constants'
 
 const AuthContext = createContext(null)
@@ -15,50 +15,85 @@ function readStoredUser() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(readStoredUser)
-  const [status, setStatus] = useState(getAccessToken() ? 'loading' : 'anonymous')
-  const mounted = useRef(true)
+  const [user, setUser] = useState(() => readTokens() ? readStoredUser() : null)
+  const [status, setStatus] = useState(() => readTokens() ? 'loading' : 'anonymous')
+  const operation = useRef(0)
+  const loginAttempt = useRef(0)
 
   useEffect(() => {
-    mounted.current = true
-    return () => {
-      mounted.current = false
-    }
-  }, [])
+    let active = true
+    let retryTimer
+    const stopMaintenance = startTokenMaintenance()
 
-  const initialLoginDone = useRef(false)
-
-  useEffect(() => {
-    if (initialLoginDone.current) return
-    initialLoginDone.current = true
-    if (!getAccessToken()) return
-    authService
-      .me()
-      .then((profile) => {
-        if (!mounted.current) return
-        setUser(profile)
-        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(profile))
-        setStatus('authenticated')
-      })
-      .catch(() => {
-        if (!mounted.current) return
-        setStatus('anonymous')
-      })
-  }, [])
-
-  useEffect(() => {
-    const onExpired = () => {
-      saveTokens(null)
+    const clearUser = () => {
       localStorage.removeItem(USER_STORAGE_KEY)
       setUser(null)
       setStatus('anonymous')
     }
+
+    const restore = (allowCached = true) => {
+      clearTimeout(retryTimer)
+      const id = ++operation.current
+      const session = getSessionGeneration()
+      if (!readTokens()) {
+        clearUser()
+        return
+      }
+      authService.me().then((profile) => {
+        if (!active || operation.current !== id || getSessionGeneration() !== session) return
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(profile))
+        setUser(profile)
+        setStatus('authenticated')
+      }).catch(() => {
+        if (!active || operation.current !== id || getSessionGeneration() !== session) return
+        if (!readTokens()) {
+          clearUser()
+          return
+        }
+        // A network/server failure is not evidence that the stored session is invalid.
+        const cached = allowCached && readStoredUser()
+        if (cached) {
+          setUser(cached)
+          setStatus('authenticated')
+        }
+        retryTimer = setTimeout(() => restore(allowCached), 30000)
+      })
+    }
+
+    const onExpired = () => {
+      operation.current += 1
+      clearTimeout(retryTimer)
+      clearUser()
+    }
+    const onStorage = (event) => {
+      if (event.key === TOKEN_STORAGE_KEY || event.key === null) {
+        setUser(null)
+        setStatus('loading')
+        restore(false)
+      }
+    }
     window.addEventListener('auth:expired', onExpired)
-    return () => window.removeEventListener('auth:expired', onExpired)
+    window.addEventListener('storage', onStorage)
+    restore()
+
+    return () => {
+      active = false
+      clearTimeout(retryTimer)
+      window.removeEventListener('auth:expired', onExpired)
+      window.removeEventListener('storage', onStorage)
+      stopMaintenance()
+    }
   }, [])
 
   const login = useCallback(async (credentials) => {
+    const id = operation.current
+    const attempt = ++loginAttempt.current
     const data = await authService.login(credentials)
+    if (id !== operation.current || attempt !== loginAttempt.current) {
+      throw new Error('Sign in was superseded by another session change.')
+    }
+    if (!data?.access || !data?.refresh || !data?.user) throw new Error('Invalid login response.')
+    operation.current += 1
     saveTokens({ access: data.access, refresh: data.refresh })
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data.user))
     setUser(data.user)
@@ -67,17 +102,12 @@ export function AuthProvider({ children }) {
   }, [])
 
   const logout = useCallback(async () => {
-    let refresh = null
-    try {
-      refresh = JSON.parse(localStorage.getItem(TOKEN_STORAGE_KEY) || 'null')?.refresh
-    } catch {
-      refresh = null
-    }
-    if (refresh) await authService.logout(refresh)
-    saveTokens(null)
+    operation.current += 1
+    const session = endSession()
     localStorage.removeItem(USER_STORAGE_KEY)
     setUser(null)
     setStatus('anonymous')
+    await authService.logout(session)
   }, [])
 
   const value = useMemo(

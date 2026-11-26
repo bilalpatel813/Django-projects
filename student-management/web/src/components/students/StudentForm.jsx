@@ -16,6 +16,8 @@ const fields = [
 export default function StudentForm({ student, onSubmit, onCancel, submitting, serverErrors, onFieldChange }) {
   const [values, setValues] = useState(() => Object.fromEntries(fields.map(({ name }) => [name, student?.[name] ?? ''])))
   const [errors, setErrors] = useState({})
+  const unknownErrors = Object.entries(serverErrors ?? {})
+    .filter(([name, value]) => value && name !== 'non_field_errors' && name !== 'detail' && !fields.some((field) => field.name === name))
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -35,6 +37,7 @@ export default function StudentForm({ student, onSubmit, onCancel, submitting, s
   return (
     <form onSubmit={handleSubmit}>
       {serverErrors?.non_field_errors && <p role="alert" className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{[].concat(serverErrors.non_field_errors).join(' ')}</p>}
+      {unknownErrors.map(([name, message]) => <p key={name} role="alert" className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{name}: {[].concat(message).join(' ')}</p>)}
       <fieldset disabled={submitting} className="grid gap-4 sm:grid-cols-2">
         {fields.map(({ name, label, type, ...constraints }) => {
           const message = errors[name] || (serverErrors?.[name] && [].concat(serverErrors[name]).join(' '))

@@ -27,3 +27,10 @@ export function initials(name) {
 export function dashboardEndpointPath() {
   return '/dashboard/stats'
 }
+
+export function weeklyDelta(stats) {
+  if (!stats) return undefined
+  const { students_this_week: now, students_previous_week: prev } = stats
+  if (prev === 0) return now ? undefined : 0
+  return Math.round(((now - prev) / prev) * 100)
+}

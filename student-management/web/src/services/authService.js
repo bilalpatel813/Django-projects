@@ -1,8 +1,8 @@
-import http from './http'
+import http, { revokeSession } from './http'
 
 export const authService = {
   async login({ username, password }) {
-    const { data } = await http.post('/login', { username, password })
+    const { data } = await http.post('/login', { username, password }, { skipAuth: true })
     return data
   },
 
@@ -11,11 +11,7 @@ export const authService = {
     return data
   },
 
-  async logout(refresh) {
-    try {
-      await http.post('/logout', { refresh })
-    } catch {
-      // The access token may already be expired; local logout still succeeds.
-    }
+  async logout(session) {
+    await revokeSession(session)
   },
 }

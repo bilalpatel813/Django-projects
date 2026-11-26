@@ -5,6 +5,6 @@ const rawBase = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/+$/,
  * - Leave VITE_API_BASE_URL empty in dev: requests go to "/api" and Vite proxies
  *   them to the Django server (see vite.config.js).
  * - In production set it to the deployed API origin (schema + host + port).
- *   A trailing /api is stripped so paths are never duplicated.
+ *   Paths are appended to the configured base; only trailing slashes are removed.
  */
 export const API_BASE_URL = rawBase || '/api'

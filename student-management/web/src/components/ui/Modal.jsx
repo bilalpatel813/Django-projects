@@ -4,12 +4,14 @@ import { X } from 'lucide-react'
 export default function Modal({ title, onClose, children }) {
   const titleId = useId()
   const ref = useRef(null)
+  const onCloseRef = useRef(onClose)
+  useEffect(() => { onCloseRef.current = onClose }, [onClose])
   useEffect(() => {
     const previous = document.activeElement
     const dialog = ref.current
     dialog?.focus()
     const onKey = (event) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') onCloseRef.current()
       if (event.key !== 'Tab') return
       const items = [...dialog.querySelectorAll('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])')]
       if (!items.length) { event.preventDefault(); return }
@@ -19,7 +21,7 @@ export default function Modal({ title, onClose, children }) {
     }
     document.addEventListener('keydown', onKey)
     return () => { document.removeEventListener('keydown', onKey); previous?.focus() }
-  }, [onClose])
+  }, [])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>

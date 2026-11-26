@@ -47,7 +47,7 @@ function NavItem({ item, onNavigate }) {
   )
 }
 
-export default function Sidebar({ open, onClose }) {
+export default function Sidebar({ open, onClose, isDesktop, closeButtonRef }) {
   const { logout } = useAuth()
 
   return (
@@ -61,6 +61,8 @@ export default function Sidebar({ open, onClose }) {
         aria-hidden="true"
       />
       <aside
+        id="main-navigation"
+        inert={!isDesktop && !open ? true : undefined}
         className={cn(
           'fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white transition-transform duration-200 lg:z-30 lg:translate-x-0',
           open ? 'translate-x-0' : '-translate-x-full',
@@ -71,6 +73,7 @@ export default function Sidebar({ open, onClose }) {
           <Brand />
           <button
             type="button"
+            ref={closeButtonRef}
             onClick={onClose}
             className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 lg:hidden"
             aria-label="Close navigation"
