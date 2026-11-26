@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from datetime import timedelta
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,12 +29,15 @@ SECRET_KEY = 'django-insecure-ku6t^qb+$%mh$td@och04h!f+mn-ipnfz_2w=nmbc$elfu8ub#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
+    'account.apps.AccountConfig',
+    'student.apps.StudentConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +47,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -82,7 +91,22 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINAION_CLASS':'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE':5,
+    'DEFLAUT_AUTHENTICATION_CLASSES':'rest_framework.authentication.SessionAuthentication'
+}
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME':timedelta(minutes=60), 
+    'REFRESH_TOKEN_LIFETIME':timedelta(minutes=30),
+    'ROTATE_REFRESH_TOKENS':True, 
+    'BLACKLIST_AFTER_ROTATION':True  
+}
+REST_USE_JWT = True
+SITE_ID = 1
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -115,8 +139,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
-
+STATICFILES_DIRS=[BASE_DIR/'static']
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+MEDIA_URL= '/media/'
+MEDIA_ROOT = BASE_DIR/'media'
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
