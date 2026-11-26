@@ -5,8 +5,8 @@ export const studentService = {
     const { data } = await http.get('/students/', { params: { page }, signal })
     return data
   },
-  async get(id) {
-    const { data } = await http.get(`/students/${encodeURIComponent(id)}/`)
+  async get(id, signal) {
+    const { data } = await http.get(`/students/${encodeURIComponent(id)}/`, { signal })
     return data
   },
   async create(values) {

@@ -33,11 +33,11 @@ All API configuration lives in env vars — nothing is hardcoded.
 
 | Variable | Used by | Default | Meaning |
 | --- | --- | --- | --- |
-| `VITE_API_BASE_URL` | browser bundle | *(empty)* | API origin, e.g. `https://api.example.com`. Empty → use the dev proxy. A trailing `/api` is stripped automatically. |
+| `VITE_API_BASE_URL` | browser bundle | *(empty)* | API base, e.g. `https://api.example.com` for the existing Django root routes. Empty uses `/api` and requires a matching proxy. |
 | `VITE_PROXY_TARGET` | Vite dev server only | `http://127.0.0.1:8000` | Where `/api/*` requests are forwarded during `npm run dev`. |
 
 - `.env.development` is committed with working defaults.
-- `.env.production` must be given a real `VITE_API_BASE_URL` before `npm run build`.
+- For production, set `VITE_API_BASE_URL` before `npm run build` or configure a reverse proxy for `/api`.
 
 ## Backend setup
 
@@ -51,7 +51,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install django djangorestframework djangorestframework-simplejwt \
             django-cors-headers python-dotenv whitenoise
 
-python manage.py migrate          # applies existing migrations
+python manage.py migrate          # see migration limitation below before deploying
 python manage.py createsuperuser  # the account you log in with
 python manage.py runserver
 ```
@@ -112,6 +112,10 @@ web/
 | Logout | `POST /api/logout` | Blacklists the refresh token |
 | Dashboard | `GET /api/dashboard/stats` | Aggregated stats returned by the dashboard endpoint below |
 | Students list | `GET /api/students/?page=N` | Paginated (`count`, `next`, `previous`, `results`) |
+| Student details | `GET /api/students/<uuid>/` | Fetches the selected student |
+| Add student | `POST /api/students/` | Sends the form fields to the existing serializer |
+| Edit student | `PATCH /api/students/<uuid>/` | Sends updated form fields |
+| Delete student | `DELETE /api/students/<uuid>/` | Requires confirmation in the UI |
 
 ### `GET /api/dashboard/stats` (new endpoint)
 
@@ -150,6 +154,11 @@ models only — no new models, no changes to existing response shapes.
 - **Classes = distinct courses.** The schema has no class/section entity, so the
   "Total Classes" metric counts distinct non-empty `Student.course` values.
 - **Teachers = staff users.** Counted from `User.objects.filter(is_staff=True)`.
-- **Search filters the current page only** (the students API has no search parameter).
+- **Teacher management is unavailable.** The backend exposes neither a teacher model nor teacher CRUD endpoints. The count of staff users is not a teacher directory or a management API.
+- **Student search loads all pages client-side** because the students API has no search parameter. Large datasets may take longer to search.
+- **Student authorization is broad.** The backend permits any authenticated user to read and change all students; it does not enforce staff or ownership restrictions.
+- **Fresh database migrations need attention.** In the current repository, `account/migrations` and `student/migrations` lack `__init__.py`; Django 5.2 treated these apps as unmigrated in verification. A normal `migrate` did not create their tables. Resolve and verify the migration strategy before deployment; no migration or schema changes are included here.
+- **Student pagination has no explicit ordering** in the backend, so pages may shift or repeat records while data changes.
+- **Token lifetimes need review.** The refresh token expires after 30 minutes, before the 60-minute access token; the existing frontend attempts refresh only after a 401, so an expired session may require a new login.
 - Sidebar sections marked *Soon* (Teachers, Courses, Classes, Attendance,
   Reports, Settings) are placeholders for later phases.

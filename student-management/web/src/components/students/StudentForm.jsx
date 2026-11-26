@@ -13,7 +13,7 @@ const fields = [
   { name: 'address', label: 'Address', type: 'textarea' },
 ]
 
-export default function StudentForm({ student, onSubmit, onCancel, submitting, serverErrors }) {
+export default function StudentForm({ student, onSubmit, onCancel, submitting, serverErrors, onFieldChange }) {
   const [values, setValues] = useState(() => Object.fromEntries(fields.map(({ name }) => [name, student?.[name] ?? ''])))
   const [errors, setErrors] = useState({})
 
@@ -35,10 +35,10 @@ export default function StudentForm({ student, onSubmit, onCancel, submitting, s
   return (
     <form onSubmit={handleSubmit}>
       {serverErrors?.non_field_errors && <p role="alert" className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{[].concat(serverErrors.non_field_errors).join(' ')}</p>}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <fieldset disabled={submitting} className="grid gap-4 sm:grid-cols-2">
         {fields.map(({ name, label, type, ...constraints }) => {
           const message = errors[name] || (serverErrors?.[name] && [].concat(serverErrors[name]).join(' '))
-          const props = { id: `student-${name}`, name, value: values[name], required: true, ...constraints, 'aria-invalid': Boolean(message), 'aria-describedby': message ? `error-${name}` : undefined, className: fieldClass, onChange: (event) => { setValues({ ...values, [name]: event.target.value }); setErrors({ ...errors, [name]: undefined }) } }
+          const props = { id: `student-${name}`, name, value: values[name], required: true, ...constraints, 'aria-invalid': Boolean(message), 'aria-describedby': message ? `error-${name}` : undefined, className: fieldClass, onChange: (event) => { setValues({ ...values, [name]: event.target.value }); setErrors({ ...errors, [name]: undefined }); onFieldChange?.(name) } }
           return (
             <div key={name} className={type === 'textarea' ? 'sm:col-span-2' : ''}>
               <label htmlFor={props.id} className="text-sm font-medium text-slate-700">{label}</label>
@@ -47,7 +47,7 @@ export default function StudentForm({ student, onSubmit, onCancel, submitting, s
             </div>
           )
         })}
-      </div>
+      </fieldset>
       <div className="mt-6 flex justify-end gap-2">
         <Button variant="secondary" onClick={onCancel} disabled={submitting}>Cancel</Button>
         <Button type="submit" loading={submitting}>{student ? 'Save changes' : 'Add student'}</Button>

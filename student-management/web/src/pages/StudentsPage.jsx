@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { ChevronLeft, ChevronRight, GraduationCap, Search } from 'lucide-react'
+import { useCallback, useState } from 'react'
+import { ChevronLeft, ChevronRight, GraduationCap, Plus, Search } from 'lucide-react'
 import { useStudents } from '../hooks/useStudents'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import Avatar from '../components/ui/Avatar'
@@ -8,6 +8,7 @@ import Button from '../components/ui/Button'
 import EmptyState from '../components/ui/EmptyState'
 import ErrorState from '../components/ui/ErrorState'
 import Skeleton from '../components/ui/Skeleton'
+import StudentDialog from '../components/students/StudentDialog'
 import { formatDate, formatNumber } from '../utils/format'
 import { STUDENTS_PAGE_SIZE } from '../constants'
 
@@ -17,17 +18,20 @@ export default function StudentsPage() {
   useDocumentTitle('Students')
   const [page, setPage] = useState(1)
   const [query, setQuery] = useState('')
-  const { data, loading, error, reload } = useStudents({ page })
+  const [dialog, setDialog] = useState(null)
+  const { data, loading, error, reload } = useStudents({ page, query })
+  const closeDialog = useCallback(() => setDialog(null), [])
 
   const totalPages = Math.max(1, Math.ceil(data.count / STUDENTS_PAGE_SIZE))
 
-  const rows = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) return data.results
-    return data.results.filter((s) =>
-      [s.full_name, s.email, s.course].filter(Boolean).some((v) => v.toLowerCase().includes(q)),
-    )
-  }, [data.results, query])
+  const rows = data.results
+
+  function handleSaved(deleted) {
+    closeDialog()
+    if (deleted && page > 1 && rows.length === 1) setPage((value) => value - 1)
+    else if (!deleted && page > 1) setPage(1)
+    else reload()
+  }
 
   return (
     <>
@@ -35,19 +39,22 @@ export default function StudentsPage() {
         <div>
           <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Students</h2>
           <p className="mt-1 text-sm text-slate-500">
-            {formatNumber(data.count)} students enrolled
+            {loading ? 'Loading students...' : query.trim() ? `${formatNumber(data.count)} matching students` : `${formatNumber(data.count)} students enrolled`}
           </p>
         </div>
+        <div className="flex flex-col gap-2 sm:flex-row">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
           <input
             type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Filter this page…"
-            aria-label="Filter students on this page"
+            onChange={(e) => { setQuery(e.target.value); setPage(1) }}
+            placeholder="Search all students..."
+            aria-label="Search all students"
             className="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100 sm:w-64"
           />
+        </div>
+        <Button onClick={() => setDialog({ mode: 'create' })}><Plus className="size-4" /> Add student</Button>
         </div>
       </div>
 
@@ -67,12 +74,12 @@ export default function StudentsPage() {
         ) : rows.length === 0 ? (
           <EmptyState
             icon={GraduationCap}
-            title={query ? 'No matches on this page' : 'No students enrolled yet'}
-            description={query ? 'Try a different search term or clear the filter.' : 'Add students via the API or Django admin.'}
+            title={query.trim() ? 'No matching students' : 'No students enrolled yet'}
+            description={query.trim() ? 'Try a different search term or clear the search.' : 'Add a student to get started.'}
           />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
+            <table className="w-full min-w-[850px] text-left text-sm">
               <thead>
                 <tr className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
                   <th className="px-5 py-3 font-medium">Student</th>
@@ -80,6 +87,7 @@ export default function StudentsPage() {
                   <th className="px-5 py-3 font-medium">Gender</th>
                   <th className="px-5 py-3 font-medium">Age</th>
                   <th className="px-5 py-3 font-medium">Enrolled</th>
+                  <th className="px-5 py-3 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -102,6 +110,13 @@ export default function StudentsPage() {
                     </td>
                     <td className="px-5 py-3 text-slate-600">{student.age}</td>
                     <td className="px-5 py-3 text-slate-600">{formatDate(student.enrollment_date)}</td>
+                    <td className="px-5 py-3">
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="sm" aria-label={`View ${student.full_name}`} onClick={() => setDialog({ mode: 'view', selected: student })}>View</Button>
+                        <Button variant="ghost" size="sm" aria-label={`Edit ${student.full_name}`} onClick={() => setDialog({ mode: 'edit', selected: student })}>Edit</Button>
+                        <Button variant="ghost" size="sm" className="text-red-600" aria-label={`Delete ${student.full_name}`} onClick={() => setDialog({ mode: 'delete', selected: student })}>Delete</Button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -109,7 +124,7 @@ export default function StudentsPage() {
           </div>
         )}
 
-        {!error && data.count > 0 && (
+        {!error && !loading && data.count > 0 && (
           <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
             <p className="text-xs text-slate-500">
               Page {data.page ?? page} of {totalPages}
@@ -125,6 +140,7 @@ export default function StudentsPage() {
           </div>
         )}
       </div>
+      {dialog && <StudentDialog key={`${dialog.mode}-${dialog.selected?.id ?? 'new'}`} {...dialog} onClose={closeDialog} onSaved={handleSaved} />}
     </>
   )
 }

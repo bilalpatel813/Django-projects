@@ -3,22 +3,19 @@ import { studentService } from '../services/studentService'
 import { getErrorMessage } from '../services/http'
 import { STUDENTS_PAGE_SIZE } from '../constants'
 
-export function useStudents({ page, query }) {
-  const [data, setData] = useState({ count: 0, results: [], next: null, previous: null })
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+export function useStudents({ page = 1, query = '' } = {}) {
+  const [result, setResult] = useState({ data: { count: 0, results: [], next: null, previous: null }, error: null, key: null })
   const [revision, setRevision] = useState(0)
+  const key = JSON.stringify([page, query, revision])
 
   useEffect(() => {
     const controller = new AbortController()
     const timer = setTimeout(async () => {
-      setLoading(true)
-      setError(null)
       try {
         const term = query.trim().toLowerCase()
         if (!term) {
           const result = await studentService.list({ page, signal: controller.signal })
-          if (!controller.signal.aborted) setData(result)
+          if (!controller.signal.aborted) setResult({ data: result, error: null, key })
         } else {
           // DRF exposes no search parameter. Walk its existing pages for an accurate search.
           let current = 1
@@ -34,23 +31,21 @@ export function useStudents({ page, query }) {
             current += 1
           }
           if (!controller.signal.aborted) {
-            setData({
+            setResult({ data: {
               count: matches.length,
               results: matches.slice((page - 1) * STUDENTS_PAGE_SIZE, page * STUDENTS_PAGE_SIZE),
               previous: page > 1,
               next: page * STUDENTS_PAGE_SIZE < matches.length,
-            })
+            }, error: null, key })
           }
         }
       } catch (err) {
-        if (!controller.signal.aborted) setError(getErrorMessage(err, 'Unable to load students.'))
-      } finally {
-        if (!controller.signal.aborted) setLoading(false)
+        if (!controller.signal.aborted) setResult((current) => ({ ...current, error: getErrorMessage(err, 'Unable to load students.'), key }))
       }
     }, query.trim() ? 300 : 0)
     return () => { controller.abort(); clearTimeout(timer) }
-  }, [page, query, revision])
+  }, [page, query, key])
 
   const reload = useCallback(() => setRevision((value) => value + 1), [])
-  return { data, loading, error, reload }
+  return { data: result.data, loading: result.key !== key, error: result.key === key ? result.error : null, reload }
 }
