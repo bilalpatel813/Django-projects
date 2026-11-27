@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
+from urllib.parse import parse_qsl, unquote, urlparse
 
 from pathlib import Path
 import os
@@ -91,7 +92,34 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+DATABASE_URL = os.getenv("DATABASE_URL")
 
+if DATABASE_URL:
+    _db = urlparse(DATABASE_URL)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": unquote(_db.path.lstrip("/")),
+            "USER": unquote(_db.username or ""),
+            "PASSWORD": unquote(_db.password or ""),
+            "HOST": _db.hostname,
+            "PORT": _db.port or 5432,
+            "OPTIONS": dict(parse_qsl(_db.query)) if _db.query else {},
+            "CONN_MAX_AGE": 60,
+            "CONN_HEALTH_CHECKS": True,
+        }
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DB_NAME", "studentdb"),
+            "USER": os.getenv("DB_USER", "postgres"),
+            "PASSWORD": os.getenv("DB_PASSWORD", "postgres"),
+            "HOST": os.getenv("DB_HOST", "localhost"),
+            "PORT": os.getenv("DB_PORT", "5432"),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
