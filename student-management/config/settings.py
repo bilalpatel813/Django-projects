@@ -20,8 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY
 
-DEBUG =True
-#DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+#DEBUG =True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -56,7 +56,17 @@ CSRF_TRUSTED_ORIGINS = [
     if origin.strip()
 ]
 
+# PRODUCTION SECURITY
 
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 # APPLICATIONS
 
 
@@ -65,7 +75,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
-
     "account.apps.AccountConfig",
     "student.apps.StudentConfig",
     "dashboard.apps.DashboardConfig",
