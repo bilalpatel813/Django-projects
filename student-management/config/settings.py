@@ -20,8 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY
 
-
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+DEBUG =True
+#DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
